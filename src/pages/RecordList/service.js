@@ -1,6 +1,6 @@
 import request from '@/utils/request';
 
-export async function queryRule(params) {
+export async function queryRecordList(params) {
   return request('/api/rule', {
     params,
   });
