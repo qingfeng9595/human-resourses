@@ -111,8 +111,8 @@ export default {
               authority: ['admin'],
             },
             {
-              name: '查询表格',
-              icon: 'smile',
+              name: 'record-list',
+              icon: 'table',
               path: '/recordlist',
               component: './RecordList',
             },
