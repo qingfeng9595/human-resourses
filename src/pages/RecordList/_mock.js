@@ -20,6 +20,12 @@ for (let i = 0; i < 10; i += 1) {
     updatedAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     createdAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     progress: Math.ceil(Math.random() * 100),
+    user:`用户${i}`,
+    department:`部门${i}`,
+    position:`岗位${i}`,
+    date:new Date(`2019-12-${Math.floor(i / 2) + 1}`),
+    startTime:new Date(),
+    endTime:new Date(),
   });
 }
 

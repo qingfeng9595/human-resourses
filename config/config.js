@@ -117,6 +117,12 @@ export default {
               component: './RecordList',
             },
             {
+              name: 'overtime-apply',
+              icon: 'form',
+              path: '/overtimeapply',
+              component: './OvertimeApply',
+            },
+            {
               component: './404',
             },
           ],

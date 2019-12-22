@@ -33,3 +33,13 @@ export const getAuthorityFromRouter = (router = [], pathname) => {
   if (authority) return authority;
   return undefined;
 };
+
+export function getOptionList(data){
+  if(!data){return [];}
+  let options = []; //[<Option value='0' key='all_key'>全部</Option>]
+  // console.log(data);
+  data.map((item)=>{
+    options.push(<Option disabled={item.disabled} value={item.itemName} key={item.key}>{item.itemName}</Option>)
+  })
+  return options;
+}
