@@ -23,9 +23,13 @@ class Login extends Component {
 
     if (!err) {
       const { dispatch } = this.props;
+      console.log(values);
+      // console.log(type);
+      
       dispatch({
         type: 'login/login',
-        payload: { ...values, type },
+        // payload: { ...values, type },
+        payload: { ...values},
       });
     }
   };
@@ -98,7 +102,7 @@ class Login extends Component {
                 }),
               )}
             <UserName
-              name="userName"
+              name="account"
               placeholder={`${formatMessage({
                 id: 'user-login.login.userName',
               })}: admin or user`}

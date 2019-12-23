@@ -2,24 +2,23 @@ import { queryRecordList, updateRule, addRule, removeRule } from '../service';
 const RecordListModel = {
   namespace: 'recordList',
   state: {
-    list: {},
+    list: []
   },
   effects: {
-    *fetchRecordList({payload}, { call, put }) {
-      console.log('in');
-      
-      const response = yield call(queryRecordList,payload);
-      // console.log(response);
-      
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+    *fetchRecordList({ payload }, { call, put }) {
+      const response = yield call(queryRecordList, payload);
+      console.log(response);
+      if (response.rtnCode) {
+        yield put({
+          type: 'save',
+          payload: response.data.attendanceRespList,
+        });
+      }
     },
   },
-  reducers:{
-    save(state, action){
-      return { ...state, list: action.payload || {} };
+  reducers: {
+    save(state, action) {
+      return { ...state, list: action.payload || [] };
     }
   }
 }

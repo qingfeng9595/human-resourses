@@ -177,11 +177,12 @@ export default {
   manifest: {
     basePath: '/',
   }, // chainWebpack: webpackPlugin,
-  // proxy: {
-  //   '/server/api/': {
-  //     target: 'https://preview.pro.ant.design/',
-  //     changeOrigin: true,
-  //     pathRewrite: { '^/server': '' },
-  //   },
-  // },
+  proxy: {
+    '/api': {
+      target: 'http://121.40.35.133:7000/',
+      // target: 'http://11.153.56.33:7000/',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' },
+    },
+  },
 };

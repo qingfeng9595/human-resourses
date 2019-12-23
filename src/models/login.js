@@ -11,16 +11,20 @@ const Model = {
   effects: {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
+      console.log(response);
       yield put({
         type: 'changeLoginStatus',
         payload: response,
       }); // Login successfully
 
-      if (response.status === 'ok') {
+      if (response.rtnCode === 200) {
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;
-
+        let token = response.data.token;
+        if (token) {
+          localStorage.setItem("token", token);
+        }
         if (redirect) {
           const redirectUrlParams = new URL(redirect);
 

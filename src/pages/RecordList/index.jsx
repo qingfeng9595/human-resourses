@@ -1,4 +1,4 @@
-import { Button, Divider, Dropdown, Form, Icon, Menu, message,Table } from 'antd';
+import { Button, Divider, Dropdown, Form, Icon, Menu, message, Table,Badge } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
@@ -83,7 +83,8 @@ class RecordList extends React.Component {
   constructor(props){
     super(props)
     this.state={
-
+      pageSize:10,
+      current:1,
     }
   }
   // const [createModalVisible, handleModalVisible] = useState(false);
@@ -93,23 +94,37 @@ class RecordList extends React.Component {
   handleGetRecordList=(param)=>{
 
   }
+  onShowSizeChange=(current, pageSize) =>{
+    console.log(current, pageSize);
+    this.setState({
+      pageSize,
+      current
+    })
+  }
+  handleRowKey=(record)=>{
+    return record.employeeId
+  }
   componentDidMount(){
     const { dispatch } = this.props;
     dispatch({
       type: 'recordList/fetchRecordList',
-      payload:{}
+      payload:{
+        page:this.state.current,
+        size:this.state.pageSize,
+        data:{}
+      }
     });
   }
   render(){
     const columns = [
       {
         title: '部门',
-        dataIndex: 'department',
+        dataIndex: 'dept_id',
         align:'center'
       },
       {
         title: '人员',
-        dataIndex: 'user',
+        dataIndex: 'employeeName',
         align:'center'
       },
       {
@@ -119,7 +134,7 @@ class RecordList extends React.Component {
       },
       {
         title: '日期',
-        dataIndex: 'date',
+        dataIndex: 'startTime',
         align:'center',
         render:val => <span>{moment(val).format('YYYY-MM-DD')}</span>,
       },
@@ -139,23 +154,26 @@ class RecordList extends React.Component {
         title: '状态',
         dataIndex: 'status',
         align:'center',
-        valueEnum: {
-          0: {
-            text: '正常',
-            status: 'Normal',
-          },
-          1: {
-            text: '迟到',
-            status: 'Late',
-          },
-          2: {
-            text: '早退',
-            status: 'Early',
-          },
-          3: {
-            text: '异常',
-            status: 'Error',
-          },
+        render:(text)=>{
+          switch (text) {
+            case "0":
+              return<Badge status="success" text="正常"/>
+              break;
+            case "1":
+              return <Badge status="warning" text="加班" />
+              break;
+            case "2":
+              return<Badge status="error" text="异常" />
+              break;
+            case "3":
+              return<Badge status="Error" text="迟到" />
+              break;
+            case "4":
+              return<Badge status="Error" text="早退" />
+              break;
+            default:
+              break;
+          }
         },
       },
       {
@@ -217,10 +235,19 @@ class RecordList extends React.Component {
         list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '正常' }, { key: '2', itemName: '迟到' }, { key: '3', itemName: '早退' },{ key: '4', itemName: '异常' }]
       },
     ]
+    const pagination = {
+      showSizeChanger: true,
+      showQuickJumper: true,
+      pageSize:this.state.pageSize,
+      current:this.state.current,
+      onShowSizeChange:this.onShowSizeChange
+    };
     const {
       recordList: { list },
       loading,
     } = this.props;
+    console.log();
+    
     return (
       <div className={style.recordLayout}>
         <div className={style.searchForm}>
@@ -228,8 +255,10 @@ class RecordList extends React.Component {
         </div>
         <Table
         columns={columns}
-        dataSource={list.data}
+        dataSource={list}
         loading={loading}
+        rowKey={this.handleRowKey}
+        pagination={pagination}
         className={style.recordList}
         />
       </div>
