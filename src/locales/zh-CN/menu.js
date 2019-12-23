@@ -24,6 +24,8 @@ export default {
   'menu.list.table-list': '查询表格',
   'menu.record-list': '考勤汇总',
   'menu.overtime-apply': '加班申请',
+  'menu.employee-management': '员工管理',
+  'menu.department-management': '部门管理',
   'menu.list.basic-list': '标准列表',
   'menu.list.card-list': '卡片列表',
   'menu.list.search-list': '搜索列表',

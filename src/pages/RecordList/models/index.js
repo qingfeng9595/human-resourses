@@ -2,7 +2,8 @@ import { queryRecordList, updateRule, addRule, removeRule } from '../service';
 const RecordListModel = {
   namespace: 'recordList',
   state: {
-    list: []
+    list: [],
+    total:0,
   },
   effects: {
     *fetchRecordList({ payload }, { call, put }) {
@@ -11,14 +12,17 @@ const RecordListModel = {
       if (response.rtnCode) {
         yield put({
           type: 'save',
-          payload: response.data.attendanceRespList,
+          payload: response.data,
         });
       }
     },
   },
   reducers: {
     save(state, action) {
-      return { ...state, list: action.payload || [] };
+      action.payload.attendanceRespList.map(item=>{
+        item.date = item.startTime
+      })
+      return { ...state, list: action.payload.attendanceRespList || [],total:action.payload.total };
     }
   }
 }

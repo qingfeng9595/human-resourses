@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import style from './index.less';
 const FormItem = Form.Item;
-const Option = Select.Option;
 const { RangePicker } = DatePicker;
 
 @Form.create()
@@ -20,22 +19,22 @@ class SearchForm extends PureComponent {
     e.preventDefault();
     let fieldsValue = this.props.form.getFieldsValue();
     // 遍历表单对象，将时间类型、布尔类型进行装换
-    Object.entries(fieldsValue).map(item => {
-      if (Array.isArray(item[1])) {
-        var title = item[0];
-        var start = title + '_begin';
-        var end = title + '_end';
-        fieldsValue[start] = moment(item[1][0]).format('YYYY-MM-DD');
-        fieldsValue[end] = moment(item[1][1]).format('YYYY-MM-DD');
-        delete fieldsValue[item[0]];
-      }
-      if (item[1] == '是') {
-        fieldsValue[item[0]] = true;
-      }
-      if (item[1] == '否') {
-        fieldsValue[item[0]] = false;
-      }
-    });
+    // Object.entries(fieldsValue).map(item => {
+    //   if (Array.isArray(item[1])) {
+    //     var title = item[0];
+    //     var start = title + '_begin';
+    //     var end = title + '_end';
+    //     fieldsValue[start] = moment(item[1][0]).format('YYYY-MM-DD');
+    //     fieldsValue[end] = moment(item[1][1]).format('YYYY-MM-DD');
+    //     delete fieldsValue[item[0]];
+    //   }
+    //   if (item[1] == '是') {
+    //     fieldsValue[item[0]] = true;
+    //   }
+    //   if (item[1] == '否') {
+    //     fieldsValue[item[0]] = false;
+    //   }
+    // });
     this.props.SearchSubmit(fieldsValue);
   };
 
@@ -76,7 +75,9 @@ class SearchForm extends PureComponent {
             const Range = (
               <Col md={8} sm={24} key={field} className={style.antcol}>
                 <FormItem label={label} {...formLayout} style={{ width: '100%' }}>
-                  {getFieldDecorator(field)(
+                  {getFieldDecorator(field,{
+                    initialValue:[initialValue.start,initialValue.end]
+                  })(
                     <RangePicker
                       allowClear={false}
                       style={{ width: '100%' }}
@@ -101,7 +102,7 @@ class SearchForm extends PureComponent {
               <Col md={8} sm={24} key={field} className={style.antcol}>
                 <FormItem label={label} {...formLayout} style={{ width: '100%' }}>
                   {getFieldDecorator(field, {
-                    // initialValue:initialValue
+                    initialValue:initialValue
                   })(
                     <Select placeholder={placeholder} style={{ width: '100%' }}>
                       {getOptionList(item.list)}
@@ -118,9 +119,10 @@ class SearchForm extends PureComponent {
         <Col md={8} sm={24} key="buttons" className={style.antcol}>
           {/* <span className={style.submitButtons}> */}
           <FormItem>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" icon='search'>
               查询
             </Button>
+            <Button type='primary' icon='export'  style={{ marginLeft: 8 }}>导出</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>
@@ -150,13 +152,15 @@ class SearchForm extends PureComponent {
       formList.forEach((item, i) => {
         let label = item.label;
         let field = item.field;
-        // let initialValue = item.initialValue || '';
+        let initialValue = item.initialValue || '';
         let placeholder = item.placeholder || '';
         if (item.type == 'Range') {
           const Range = (
             <Col md={8} sm={24} key={field} className={style.antcol}>
               <FormItem label={label} {...formLayout} style={{ width: '100%' }}>
-                {getFieldDecorator(field)(
+                {getFieldDecorator(field,{
+                   initialValue:[initialValue.start,initialValue.end]
+                })(
                   <RangePicker allowClear={false} style={{ width: '100%' }} format="YYYY-MM-DD" />,
                 )}
               </FormItem>
@@ -177,7 +181,7 @@ class SearchForm extends PureComponent {
             <Col md={8} sm={24} key={field} className={style.antcol}>
               <FormItem label={label} {...formLayout} style={{ width: '100%' }}>
                 {getFieldDecorator(field, {
-                  // initialValue:initialValue
+                  initialValue:initialValue
                 })(
                   <Select placeholder={placeholder} style={{ width: '100%' }}>
                     {getOptionList(item.list)}
@@ -192,9 +196,10 @@ class SearchForm extends PureComponent {
       const Buttons = (
         <Col md={8} sm={24} key="buttons" className={style.antcol}>
           <FormItem>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" icon='search'>
               查询
             </Button>
+            <Button type='primary' icon='export'  style={{ marginLeft: 8 }}>导出</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>

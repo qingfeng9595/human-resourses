@@ -123,6 +123,18 @@ export default {
               component: './OvertimeApply',
             },
             {
+              name: 'employee-management',
+              icon: 'usergroup-add',
+              path: '/employeemanagement',
+              component: './EmployeeManagement',
+            },
+            {
+              name: 'department-management',
+              icon: 'build',
+              path: '/departmentmanagement',
+              component: './DepartmentManagement',
+            },
+            {
               component: './404',
             },
           ],

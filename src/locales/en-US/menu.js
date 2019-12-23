@@ -24,6 +24,8 @@ export default {
   'menu.list.table-list': 'Search Table',
   'menu.record-list': 'Record Table',
   'menu.overtime-apply': 'Overtime Apply',
+  'menu.employee-management': 'Employee Management',
+  'menu.department-management': 'Department Management',
   'menu.list.basic-list': 'Basic List',
   'menu.list.card-list': 'Card List',
   'menu.list.search-list': 'Search List',

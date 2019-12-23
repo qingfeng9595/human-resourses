@@ -10,71 +10,7 @@ import moment from 'moment';
 import style from './index.less'
 // import { queryRule, updateRule, addRule, removeRule } from './service';
 
-/**
- * 添加节点
- * @param fields
- */
-const handleAdd = async fields => {
-  const hide = message.loading('正在添加');
 
-  try {
-    await addRule({
-      desc: fields.desc,
-    });
-    hide();
-    message.success('添加成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('添加失败请重试！');
-    return false;
-  }
-};
-/**
- * 更新节点
- * @param fields
- */
-
-const handleUpdate = async fields => {
-  const hide = message.loading('正在配置');
-
-  try {
-    await updateRule({
-      name: fields.name,
-      desc: fields.desc,
-      key: fields.key,
-    });
-    hide();
-    message.success('配置成功');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('配置失败请重试！');
-    return false;
-  }
-};
-/**
- *  删除节点
- * @param selectedRows
- */
-
-const handleRemove = async selectedRows => {
-  const hide = message.loading('正在删除');
-  if (!selectedRows) return true;
-
-  try {
-    await removeRule({
-      key: selectedRows.map(row => row.key),
-    });
-    hide();
-    message.success('删除成功，即将刷新');
-    return true;
-  } catch (error) {
-    hide();
-    message.error('删除失败，请重试');
-    return false;
-  }
-};
 @connect(({ recordList, loading }) => ({
   recordList,
   loading: loading.models.recordList,
@@ -85,6 +21,12 @@ class RecordList extends React.Component {
     this.state={
       pageSize:10,
       current:1,
+      fields:{
+        date:[
+          new Date(`${new Date().getFullYear()}-${new Date().getMonth()+1}-01`),
+          new Date()
+        ]
+      }
     }
   }
   // const [createModalVisible, handleModalVisible] = useState(false);
@@ -98,11 +40,57 @@ class RecordList extends React.Component {
     console.log(current, pageSize);
     this.setState({
       pageSize,
-      current
-    })
+      current,
+    },()=>{
+      this.SearchSubmit(this.state.fields)
+    })   
+    
   }
-  handleRowKey=(record)=>{
-    return record.employeeId
+  handleRowKey=(record,i)=>{
+    return record.startTime + i
+  }
+  handleStatus=(val)=>{
+    switch (val) {
+      case "正常":
+        return "0"
+        break;
+      case "加班":
+        return "1"
+        break;
+      case "异常":
+        return "2"
+        break;
+      case "迟到":
+        return "3"
+        break;
+      case "早退":
+        return "4"
+        break;
+      default:
+        return ''
+        break;
+    }
+  }
+  SearchSubmit=(fields)=>{
+    this.setState({
+      fields
+    })
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'recordList/fetchRecordList',
+      payload:{
+        page:this.state.current,
+        size:this.state.pageSize,
+        data:{
+          start_time:moment(fields.date[0]).format('YYYY-MM-DD'),
+          end_time:moment(fields.date[1]).format('YYYY-MM-DD'),
+          employeeName:fields.employeeName?fields.employeeName:'',
+          dept_id:fields.dept_id?fields.dept_id:'',
+          member:fields.member?fields.member:'',
+          status:this.handleStatus(fields.status)
+        }
+      }
+    });
   }
   componentDidMount(){
     const { dispatch } = this.props;
@@ -111,7 +99,10 @@ class RecordList extends React.Component {
       payload:{
         page:this.state.current,
         size:this.state.pageSize,
-        data:{}
+        data:{
+          start_time:moment(new Date(`${new Date().getFullYear()}-${new Date().getMonth()+1}-01`)).format('YYYY-MM-DD'),
+          end_time:moment(new Date()).format('YYYY-MM-DD')
+        }
       }
     });
   }
@@ -128,13 +119,13 @@ class RecordList extends React.Component {
         align:'center'
       },
       {
-        title: '岗位',
-        dataIndex: 'position',
+        title: '工号',
+        dataIndex: 'member',
         align:'center'
       },
       {
         title: '日期',
-        dataIndex: 'startTime',
+        dataIndex: 'date',
         align:'center',
         render:val => <span>{moment(val).format('YYYY-MM-DD')}</span>,
       },
@@ -181,49 +172,60 @@ class RecordList extends React.Component {
         dataIndex: 'option',
         valueType: 'option',
         align:'center',
-        render: (_, record) => (
-          <>
+        render: (_, record) => {
+          if(record.overtime > 0){
             <a
-              onClick={() => {
-                handleUpdateModalVisible(true);
-                setStepFormValues(record);
-              }}
             >
-              配置
+              申请加班
             </a>
-            <Divider type="vertical" />
-            <a href="">订阅警报</a>
-          </>
-        ),
+          }
+          // <>
+          //   <a
+          //     onClick={() => {
+          //       handleUpdateModalVisible(true);
+          //       setStepFormValues(record);
+          //     }}
+          //   >
+          //     配置
+          //   </a>
+          //   <Divider type="vertical" />
+          //   <a href="">订阅警报</a>
+          // </>
+      },
       },
     ];
+    
     const formList = [
       {
         key:'b',
         type:'Range',
         label:'日期',
         field:'date',
+        initialValue:{
+            start:moment(new Date(`${new Date().getFullYear()}-${new Date().getMonth()+1}-01`)),
+            end:moment(new Date())
+        },
       },
       {
         key:'c',
         type:'Input',
         label:'人员',
-        field:'user',
+        field:'employeeName',
         placeholder:'请输入',
       },
       {
         key:'a',
         type:'Select',
         label:'部门',
-        field:'department',
+        field:'dept_id',
         placeholder:'请选择',
         list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '部门1' }, { key: '2', itemName: '部门2' }, { key: '3', itemName: '部门3' }]
       },
       {
         key:'d',
         type:'Input',
-        label:'岗位',
-        field:'position',
+        label:'工号',
+        field:'member',
         placeholder:'请输入',
       },
       {
@@ -231,8 +233,9 @@ class RecordList extends React.Component {
         type:'Select',
         label:'状态',
         field:'status',
+        initialValue:'全部',
         placeholder:'请选择',
-        list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '正常' }, { key: '2', itemName: '迟到' }, { key: '3', itemName: '早退' },{ key: '4', itemName: '异常' }]
+        list: [{ key: '0', itemName: '全部' }, { key: '0', itemName: '正常' }, { key: '1', itemName: '加班' },{ key: '2', itemName: '异常' },{ key: '3', itemName: '迟到' }, { key: '4', itemName: '早退' }]
       },
     ]
     const pagination = {
@@ -240,18 +243,18 @@ class RecordList extends React.Component {
       showQuickJumper: true,
       pageSize:this.state.pageSize,
       current:this.state.current,
-      onShowSizeChange:this.onShowSizeChange
+      total:106,
+      onChange:this.onShowSizeChange
     };
     const {
       recordList: { list },
       loading,
     } = this.props;
-    console.log();
     
     return (
       <div className={style.recordLayout}>
         <div className={style.searchForm}>
-          <SearchForm  formList={formList} styles={style}/>
+          <SearchForm  formList={formList} styles={style} SearchSubmit={this.SearchSubmit} />
         </div>
         <Table
         columns={columns}
@@ -262,89 +265,6 @@ class RecordList extends React.Component {
         className={style.recordList}
         />
       </div>
-      // <PageHeaderWrapper>
-      //   <ProTable
-      //     headerTitle="查询表格"
-      //     onInit={setActionRef}
-      //     rowKey="key"
-      //     toolBarRender={(action, { selectedRows }) => [
-      //       <Button icon="plus" type="primary" onClick={() => handleModalVisible(true)}>
-      //         新建
-      //       </Button>,
-      //       selectedRows && selectedRows.length > 0 && (
-      //         <Dropdown
-      //           overlay={
-      //             <Menu
-      //               onClick={async e => {
-      //                 if (e.key === 'remove') {
-      //                   await handleRemove(selectedRows);
-      //                   action.reload();
-      //                 }
-      //               }}
-      //               selectedKeys={[]}
-      //             >
-      //               <Menu.Item key="remove">批量删除</Menu.Item>
-      //               <Menu.Item key="approval">批量审批</Menu.Item>
-      //             </Menu>
-      //           }
-      //         >
-      //           <Button>
-      //             批量操作 <Icon type="down" />
-      //           </Button>
-      //         </Dropdown>
-      //       ),
-      //     ]}
-      //     tableAlertRender={(selectedRowKeys, selectedRows) => (
-      //       <div>
-      //         已选择{' '}
-      //         <a
-      //           style={{
-      //             fontWeight: 600,
-      //           }}
-      //         >
-      //           {selectedRowKeys.length}
-      //         </a>{' '}
-      //         项&nbsp;&nbsp;
-      //         <span>
-      //           服务调用次数总计 {selectedRows.reduce((pre, item) => pre + item.callNo, 0)} 万
-      //         </span>
-      //       </div>
-      //     )}
-      //     request={params => queryRule(params)}
-      //     columns={columns}
-      //   />
-      //   <CreateForm
-      //     onSubmit={async value => {
-      //       const success = await handleAdd(value);
-  
-      //       if (success) {
-      //         handleModalVisible(false);
-      //         actionRef.reload();
-      //       }
-      //     }}
-      //     onCancel={() => handleModalVisible(false)}
-      //     modalVisible={createModalVisible}
-      //   />
-      //   {stepFormValues && Object.keys(stepFormValues).length ? (
-      //     <UpdateForm
-      //       onSubmit={async value => {
-      //         const success = await handleUpdate(value);
-  
-      //         if (success) {
-      //           handleModalVisible(false);
-      //           setStepFormValues({});
-      //           actionRef.reload();
-      //         }
-      //       }}
-      //       onCancel={() => {
-      //         handleUpdateModalVisible(false);
-      //         setStepFormValues({});
-      //       }}
-      //       updateModalVisible={updateModalVisible}
-      //       values={stepFormValues}
-      //     />
-      //   ) : null}
-      // </PageHeaderWrapper>
     );
   }
 };
