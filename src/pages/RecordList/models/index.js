@@ -9,7 +9,7 @@ const RecordListModel = {
     *fetchRecordList({ payload }, { call, put }) {
       const response = yield call(queryRecordList, payload);
       console.log(response);
-      if (response.rtnCode) {
+      if (response.rtnCode === 200) {
         yield put({
           type: 'save',
           payload: response.data,

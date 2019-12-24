@@ -110,17 +110,17 @@ class RecordList extends React.Component {
     const columns = [
       {
         title: '部门',
-        dataIndex: 'dept_id',
+        dataIndex: 'deptName',
         align:'center'
       },
       {
-        title: '人员',
+        title: '员工',
         dataIndex: 'employeeName',
         align:'center'
       },
       {
         title: '工号',
-        dataIndex: 'member',
+        dataIndex: 'jobMember',
         align:'center'
       },
       {
@@ -174,10 +174,11 @@ class RecordList extends React.Component {
         align:'center',
         render: (_, record) => {
           if(record.overtime > 0){
-            <a
-            >
-              申请加班
-            </a>
+            return<a>申请加班</a>
+          }else if(record.status === '2'){
+            return <a>申请补卡</a>
+          } else if (record.status === '3' || record.status === '4'){
+            return <a>申请调休</a>
           }
           // <>
           //   <a
@@ -209,14 +210,14 @@ class RecordList extends React.Component {
       {
         key:'c',
         type:'Input',
-        label:'人员',
+        label:'员工姓名',
         field:'employeeName',
         placeholder:'请输入',
       },
       {
         key:'a',
         type:'Select',
-        label:'部门',
+        label:'所属部门',
         field:'dept_id',
         placeholder:'请选择',
         list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '部门1' }, { key: '2', itemName: '部门2' }, { key: '3', itemName: '部门3' }]
@@ -224,7 +225,7 @@ class RecordList extends React.Component {
       {
         key:'d',
         type:'Input',
-        label:'工号',
+        label:'员工工号',
         field:'member',
         placeholder:'请输入',
       },
@@ -238,23 +239,25 @@ class RecordList extends React.Component {
         list: [{ key: '0', itemName: '全部' }, { key: '0', itemName: '正常' }, { key: '1', itemName: '加班' },{ key: '2', itemName: '异常' },{ key: '3', itemName: '迟到' }, { key: '4', itemName: '早退' }]
       },
     ]
+    const {
+      recordList: { list,total },
+      loading,
+    } = this.props;
     const pagination = {
       showSizeChanger: true,
       showQuickJumper: true,
-      pageSize:this.state.pageSize,
-      current:this.state.current,
-      total:106,
-      onChange:this.onShowSizeChange
+      pageSize: this.state.pageSize,
+      current: this.state.current,
+      total: total,
+      onChange: this.onShowSizeChange
     };
-    const {
-      recordList: { list },
-      loading,
-    } = this.props;
-    
     return (
       <div className={style.recordLayout}>
         <div className={style.searchForm}>
           <SearchForm  formList={formList} styles={style} SearchSubmit={this.SearchSubmit} />
+        </div>
+        <div className={style.export}>
+          <Button type='primary' icon='export' style={{ marginLeft: 8 }} >导出Excel</Button>
         </div>
         <Table
         columns={columns}

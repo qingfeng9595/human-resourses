@@ -122,7 +122,6 @@ class SearchForm extends PureComponent {
             <Button type="primary" htmlType="submit" icon='search'>
               查询
             </Button>
-            <Button type='primary' icon='export'  style={{ marginLeft: 8 }}>导出</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>
@@ -199,7 +198,6 @@ class SearchForm extends PureComponent {
             <Button type="primary" htmlType="submit" icon='search'>
               查询
             </Button>
-            <Button type='primary' icon='export'  style={{ marginLeft: 8 }}>导出</Button>
             <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
               重置
             </Button>
