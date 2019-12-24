@@ -249,6 +249,7 @@ class RecordList extends React.Component {
       pageSize: this.state.pageSize,
       current: this.state.current,
       total: total,
+      showTotal:total => `Total ${total} 条`,
       onChange: this.onShowSizeChange
     };
     return (

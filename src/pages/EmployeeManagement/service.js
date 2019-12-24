@@ -1,11 +1,10 @@
 import request from '@/utils/request';
 
 export async function queryEmployeeList(params) {
-  // return request(`/api/1/attendance/${params.page}/${params.size}`, {
-  //   method: 'POST',
-  //   data: { ...params.data },
-  // });
-  return request(`/api/1/employee/2/${params.page}/${params.pageSize}`);
+  return request(`/api/1/employee/2/${params.page}/${params.pageSize}`,{
+    method: 'POST',
+    data: { ...params.data },
+  });
 }
 
 export async function createEmployee(params) {
@@ -13,4 +12,8 @@ export async function createEmployee(params) {
     method: 'POST',
     data: { ...params },
   });
+}
+
+export async function queryDepartmentList(){
+  return request('/api/1/dept')
 }

@@ -41,7 +41,7 @@ export function getOptionList(data){
   let options = []; //[<Option value='0' key='all_key'>全部</Option>]
   // console.log(data);
   data.map((item)=>{
-    options.push(<Option disabled={item.disabled} value={item.itemName} key={item.key}>{item.itemName}</Option>)
+    options.push(<Option disabled={item.disabled} value={item.id} key={item.id}>{item.deptName}</Option>)
   })
   return options;
 }
