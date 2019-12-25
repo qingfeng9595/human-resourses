@@ -1,14 +1,14 @@
 import request from '@/utils/request';
 
-export async function createDepartment(params) {
-  return request(`/api/1/employee/`, {
-    method: 'POST',
-    data: { ...params },
-  });
-}
+// export async function createDepartment(params) {
+//   return request(`/api/1/employee/`, {
+//     method: 'POST',
+//     data: { ...params },
+//   });
+// }
 
 export async function updateDepartment(params) {
-  return request(`/api/1/employee/`, {
+  return request(`/api/1/dept/${params.deptId}`, {
     method: 'POST',
     data: { ...params },
   });

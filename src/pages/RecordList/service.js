@@ -5,9 +5,6 @@ export async function queryRecordList(params) {
     method: 'POST',
     data: { ...params.data },
   });
-  return request('/api/rule', {
-    params,
-  });
 }
 
 export async function queryExport(params) {

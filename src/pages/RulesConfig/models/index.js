@@ -1,4 +1,4 @@
-import { queryDepartmentList, createDepartment } from '../service';
+import { queryDepartmentList, createDepartment,queryRuleList } from '../service';
 import { message } from 'antd';
 const RulesConfigModel = {
   namespace: 'rulesConfig',
@@ -8,8 +8,8 @@ const RulesConfigModel = {
     deptList: []
   },
   effects: {
-    *fetchDepartmentList(_, { call, put }) {
-      const response = yield call(queryDepartmentList);
+    *fetchRuleList(_, { call, put }) {
+      const response = yield call(queryRuleList);
       console.log(response);
       // if (response.rtnCode === 200) {
       //   yield put({

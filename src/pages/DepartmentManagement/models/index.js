@@ -1,4 +1,4 @@
-import { queryDepartmentList, createDepartment, queryEmployeeList } from '../service';
+import { queryDepartmentList, createDepartment, queryEmployeeList,updateDepartment } from '../service';
 import { message } from 'antd';
 const DepartmentListModel = {
   namespace: 'departmentList',
@@ -21,15 +21,21 @@ const DepartmentListModel = {
     },
     *createDepartment({ payload }, { call, put }) {
       const response = yield call(createDepartment, payload);
-      console.log(response);
       if (response.rtnCode === 200) {
         message.success('创建成功！');
       }
     },
+    *updateDepartment({ payload }, { call, put }) {
+      const response = yield call(updateDepartment, payload);
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'saveSuccess',
+          payload: response,
+        });
+      }
+    },
     *fetchEmployeeList(_, { call, put }) {
       const response = yield call(queryEmployeeList);
-      console.log(response);
-
       if (response.rtnCode === 200) {
         yield put({
           type: 'saveEmployee',
@@ -47,6 +53,9 @@ const DepartmentListModel = {
         item.deptName = item.name 
       })
       return { ...state, employeeList: action.payload.employeeRespList || [] };
+    },
+    saveSuccess(state, action){
+      return { ...state, status: action.payload.rtnCode }
     }
   }
 }

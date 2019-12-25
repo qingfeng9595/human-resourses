@@ -35,19 +35,21 @@ const AuthComponent = ({
   },
   user,
 }) => {
-  const { currentUser } = user;
+  // const { currentUser } = user;
+  const token = window.localStorage.token
   const { routes = [] } = route;
-  const isLogin = currentUser && currentUser.name;
+  // const isLogin = currentUser && currentUser.name;
   return (
     <Authorized
       authority={getRouteAuthority(location.pathname, routes) || ''}
-      noMatch={isLogin ? <Redirect to="/exception/403" /> : <Redirect to="/user/login" />}
+      noMatch={token ? <Redirect to="/exception/403" /> : <Redirect to="/user/login" />}
     >
       {children}
     </Authorized>
   );
 };
 
-export default connect(({ user }) => ({
-  user,
-}))(AuthComponent);
+// export default connect(({ user }) => ({
+//   user,
+// }))(AuthComponent);
+export default AuthComponent

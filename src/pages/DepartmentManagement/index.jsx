@@ -1,12 +1,12 @@
-import { Button, Row, Select, Form, Modal, Table, Divider,Input } from 'antd';
+import { Button, Row, Select, Form, Modal, Table, Divider, Input } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { connect } from 'dva';
-import SearchForm from '@/components/SearchForm'
+import SearchForm from '@/components/SearchForm';
 import moment from 'moment';
-import style from './index.less'
+import style from './index.less';
 import { updateDepartment } from './service';
 import { getOptionList } from '@/utils/utils';
-const FormItem = Form.Item
+const FormItem = Form.Item;
 
 @Form.create()
 class UpdateDepartment extends React.Component {
@@ -15,7 +15,7 @@ class UpdateDepartment extends React.Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       form.resetFields();
-      fieldsValue.id = record.id
+      fieldsValue.id = record.id;
       handleUpdateDepartment(fieldsValue);
     });
   };
@@ -54,9 +54,13 @@ class UpdateDepartment extends React.Component {
             {getFieldDecorator('deptId', {
               initialValue: record.deptId,
             })(
-              <Select placeholder='请选择' showSearch>
+              <Select
+                placeholder="请选择"
+                showSearch
+                optionFilterProp="children"
+              >
                 {getOptionList(employeeList)}
-              </Select>
+              </Select>,
             )}
           </FormItem>
         </Form>
@@ -69,50 +73,56 @@ class UpdateDepartment extends React.Component {
   departmentList,
   loading: loading.models.departmentList,
 }))
-export default class DepartmentManagement extends React.Component{
-  constructor(props){
-    super(props)
-    this.state={
-      pageSize:10,
-      page:1,
-      title:'',
-      updateVisible:false,
-      record:{}
-    }
+export default class DepartmentManagement extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pageSize: 10,
+      page: 1,
+      title: '',
+      updateVisible: false,
+      record: {},
+    };
   }
-  componentDidMount(){
-    const { dispatch } = this.props
+  componentDidMount() {
+    const { dispatch } = this.props;
     dispatch({
-      type:'departmentList/fetchDepartmentList'
-    })
+      type: 'departmentList/fetchDepartmentList',
+    });
     dispatch({
       type: 'departmentList/fetchEmployeeList',
-      payload:{}
-    })
+      payload: {},
+    });
   }
   handleRowKey = (record, i) => {
-    return record.id
-  }
+    return record.id;
+  };
   onShowSizeChange = (current, pageSize) => {
-    this.setState({
-      pageSize,
-    }, () => {
-      this.SearchSubmit(this.state.fields)
-    })
-  }
+    this.setState(
+      {
+        pageSize,
+      },
+      () => {
+        this.SearchSubmit(this.state.fields);
+      },
+    );
+  };
   onShowPageChange = (current, pageSize) => {
-    this.setState({
-      page: current,
-    }, () => {
-      this.SearchSubmit(this.state.fields)
-    })
-  }
+    this.setState(
+      {
+        page: current,
+      },
+      () => {
+        this.SearchSubmit(this.state.fields);
+      },
+    );
+  };
   handleUpdateVisible = (flag, record) => {
     if (record) {
       this.setState({
         updateVisible: !!flag,
         title: '编辑',
-        record
+        record,
       });
     } else {
       this.setState({
@@ -121,53 +131,60 @@ export default class DepartmentManagement extends React.Component{
     }
   };
   handleUpdateDepartment = fields => {
-    console.log(fields);
-    
-    const { dispatch } = this.props
-    // dispatch({
-    //   type: 'employeeList/updateEmployee',
-    //   payload: fields
-    // }).then(() => {
-    //   const {
-    //     employeeList: { status }
-    //   } = this.props
-    //   if (status === 200) {
-    //     message.success('更新成功！')
-    //     this.handleUpdateVisible(false)
-    //     this.SearchSubmit(this.state.fields)
-    //   }
-    // })
-  }
-  render(){
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'departmentList/updateDepartment',
+      payload: fields
+    }).then(() => {
+      const {
+        departmentList: { status },
+        dispatch
+      } = this.props
+      if (status === 200) {
+        message.success('更新成功！')
+        this.handleUpdateVisible(false)
+        dispatch({
+          type: 'departmentList/fetchDepartmentList',
+        });
+      }
+    })
+  };
+  render() {
     const columns = [
       {
         title: '部门',
         dataIndex: 'deptName',
-        align: 'center'
+        align: 'center',
       },
       {
         title: '部门主管',
         dataIndex: 'leader',
-        align: 'center'
+        align: 'center',
       },
       {
         title: '操作',
         dataIndex: 'option',
         valueType: 'option',
         align: 'center',
-        render: (text,record) =>(
+        render: (text, record) => (
           <span>
-            <a onClick={() => { this.handleUpdateVisible(true, record) }}>编辑</a>
+            <a
+              onClick={() => {
+                this.handleUpdateVisible(true, record);
+              }}
+            >
+              编辑
+            </a>
             {/* <Divider type="vertical" /> */}
             {/* <a>删除</a> */}
           </span>
         ),
       },
-    ]
+    ];
     const {
-      departmentList: { list, employeeList},
-      loading
-    } = this.props
+      departmentList: { list, employeeList },
+      loading,
+    } = this.props;
     const updateEmployeeProps = {
       title: this.state.title,
       updateVisible: this.state.updateVisible,
@@ -176,20 +193,27 @@ export default class DepartmentManagement extends React.Component{
       handleUpdateVisible: this.handleUpdateVisible,
       handleUpdateDepartment: this.handleUpdateDepartment,
     };
-    return(
+    return (
       <div className={style.departmentLayout}>
-      <div className={style.create}>
-        <Button type='primary' icon='plus' style={{ marginLeft: 8 }} onClick={()=>this.handleCreateVisible(true)}>新建部门</Button>
+        <div className={style.create}>
+          <Button
+            type="primary"
+            icon="plus"
+            style={{ marginLeft: 8 }}
+            onClick={() => this.handleCreateVisible(true)}
+          >
+            新建部门
+          </Button>
+        </div>
+        <Table
+          columns={columns}
+          dataSource={list}
+          loading={loading}
+          rowKey={this.handleRowKey}
+          className={style.departmentList}
+        />
+        <UpdateDepartment {...updateEmployeeProps} />
       </div>
-      <Table
-        columns={columns}
-        dataSource={list}
-        loading={loading}
-        rowKey={this.handleRowKey}
-        className={style.departmentList}
-      />
-        <UpdateDepartment  {...updateEmployeeProps}/>
-    </div>
-    )
+    );
   }
 }

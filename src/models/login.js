@@ -18,6 +18,7 @@ const Model = {
       }); // Login successfully
 
       if (response.rtnCode === 200) {
+        window.sessionStorage.setItem('userId',response.data.jobNumber)
         const urlParams = new URL(window.location.href);
         const params = getPageQuery();
         let { redirect } = params;

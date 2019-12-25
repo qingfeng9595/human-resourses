@@ -104,6 +104,7 @@ const BasicLayout = props => {
     if (dispatch) {
       dispatch({
         type: 'user/fetchCurrent',
+        payload:window.sessionStorage.userId
       });
     }
   }, []);

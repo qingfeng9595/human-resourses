@@ -149,7 +149,7 @@ function postRule(req, res, u, b) {
   return res.json(result);
 }
 
-export default {
-  'GET /api/rule': getRule,
-  'POST /api/rule': postRule,
-};
+// export default {
+//   'GET /api/rule': getRule,
+//   'POST /api/rule': postRule,
+// };
