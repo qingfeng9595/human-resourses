@@ -111,16 +111,22 @@ export default {
               authority: ['admin'],
             },
             {
+              name: 'dashboard',
+              icon: 'dashboard',
+              path: '/dashboard',
+              component: './Dashboard',
+            },
+            {
               name: 'record-list',
               icon: 'table',
               path: '/recordlist',
               component: './RecordList',
             },
             {
-              name: 'overtime-apply',
+              name: 'applied-process',
               icon: 'form',
-              path: '/overtimeapply',
-              component: './OvertimeApply',
+              path: '/appliedprocess',
+              component: './AppliedProcess',
             },
             {
               name: 'employee-management',
@@ -133,6 +139,12 @@ export default {
               icon: 'build',
               path: '/departmentmanagement',
               component: './DepartmentManagement',
+            },
+            {
+              name: 'rules-config',
+              icon: 'setting',
+              path: '/rulesconfig',
+              component: './RulesConfig',
             },
             {
               component: './404',

@@ -1,22 +1,23 @@
-import { queryDepartmentList, createDepartment } from '../service';
+import { queryDepartmentList, createDepartment, queryEmployeeList } from '../service';
 import { message } from 'antd';
 const DepartmentListModel = {
   namespace: 'departmentList',
   state: {
     list: [],
     total: 0,
-    deptList:[]
+    deptList:[],
+    employeeList:[]
   },
   effects: {
     *fetchDepartmentList(_, { call, put }) {
       const response = yield call(queryDepartmentList);
       console.log(response);
-      // if (response.rtnCode === 200) {
-      //   yield put({
-      //     type: 'save',
-      //     payload: response.data,
-      //   });
-      // }
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'save',
+          payload: response.data,
+        });
+      }
     },
     *createDepartment({ payload }, { call, put }) {
       const response = yield call(createDepartment, payload);
@@ -25,10 +26,27 @@ const DepartmentListModel = {
         message.success('创建成功！');
       }
     },
+    *fetchEmployeeList(_, { call, put }) {
+      const response = yield call(queryEmployeeList);
+      console.log(response);
+
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'saveEmployee',
+          payload: response.data,
+        });
+      }
+    },
   },
   reducers: {
     save(state, action) {
-      return { ...state, list: action.payload.employeeRespList || [], total: action.payload.total };
+      return { ...state, list: action.payload.deptRespList || [], total: action.payload.total };
+    },
+    saveEmployee(state, action){
+      action.payload.employeeRespList.map(item=>{
+        item.deptName = item.name 
+      })
+      return { ...state, employeeList: action.payload.employeeRespList || [] };
     }
   }
 }

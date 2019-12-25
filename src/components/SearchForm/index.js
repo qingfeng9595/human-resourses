@@ -180,7 +180,7 @@ class SearchForm extends PureComponent {
             <Col md={8} sm={24} key={field} className={style.antcol}>
               <FormItem label={label} {...formLayout} style={{ width: '100%' }}>
                 {getFieldDecorator(field, {
-                  initialValue:initialValue
+                  initialValue: initialValue == '' ? undefined : initialValue
                 })(
                   <Select placeholder={placeholder} style={{ width: '100%' }}>
                     {getOptionList(item.list)}

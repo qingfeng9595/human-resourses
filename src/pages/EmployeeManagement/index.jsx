@@ -1,4 +1,4 @@
-import { Button, Row, Col, Form, Select, Table, Divider, Input, Modal, DatePicker } from 'antd';
+import { Button, message, Col, Form, Select, Table, Divider, Input, Modal, DatePicker } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { connect } from 'dva';
 import SearchForm from '@/components/SearchForm';
@@ -20,6 +20,8 @@ class CreateEmployee extends React.Component {
   };
   render() {
     const { title, visible, handleCreateModalCancel,deptList } = this.props;
+
+    
     const formItemLayout = {
       labelCol: {
         span: 5,
@@ -32,9 +34,10 @@ class CreateEmployee extends React.Component {
     return (
       <Modal
         title={title}
+        destroyOnClose
         visible={visible}
         onOk={this.handleOk}
-        onCancel={handleCreateModalCancel}
+        onCancel={()=>handleCreateModalCancel()}
       >
         <Form layout="horizontal">
           <FormItem label="姓名" {...formItemLayout}>
@@ -81,6 +84,88 @@ class CreateEmployee extends React.Component {
   }
 }
 
+@Form.create()
+class UpdateEmployee extends React.Component {
+  handleOk = () => {
+    const { form, handleUpdateEmployee,record } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      fieldsValue.joinDate = moment(fieldsValue.joinDate).format('YYYY-MM-DD')
+      fieldsValue.id = record.id
+      handleUpdateEmployee(fieldsValue);
+    });
+  };
+  render() {
+    const { title, updateVisible, handleUpdateVisible, deptList,record } = this.props;
+
+
+    const formItemLayout = {
+      labelCol: {
+        span: 5,
+      },
+      wrapperCol: {
+        span: 15,
+      },
+    };
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Modal
+        title={title}
+        destroyOnClose
+        visible={updateVisible}
+        onOk={this.handleOk}
+        onCancel={() => handleUpdateVisible()}
+      >
+        <Form layout="horizontal">
+          <FormItem label="姓名" {...formItemLayout}>
+            {getFieldDecorator('name', {
+              initialValue: record.name,
+              rules: [
+                {
+                  required: true,
+                  message: '姓名不能为空',
+                },
+              ],
+            })(<Input placeholder="请输入" />)}
+          </FormItem>
+          <FormItem label="工号" {...formItemLayout}>
+            {getFieldDecorator('jobNumber', {
+              initialValue: record.jobNumber,
+              rules: [
+                {
+                  required: true,
+                  message: '工号不能为空',
+                },
+              ],
+            })(<Input placeholder="请输入" />)}
+          </FormItem>
+          <FormItem label="入职日期" {...formItemLayout}>
+            {getFieldDecorator('joinDate', {
+              initialValue: moment(record.joinDate),
+              rules: [
+                {
+                  required: true,
+                  message: '入职日期不能为空',
+                },
+              ],
+            })(<DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />)}
+          </FormItem>
+          <FormItem label="部门" {...formItemLayout}>
+            {getFieldDecorator('deptId', {
+              initialValue: record.deptId,
+            })(
+              <Select placeholder='请选择'>
+                {getOptionList(deptList)}
+              </Select>
+            )}
+          </FormItem>
+        </Form>
+      </Modal>
+    );
+  }
+}
+
 @connect(({ employeeList, loading }) => ({
   employeeList,
   loading: loading.models.employeeList,
@@ -92,8 +177,10 @@ export default class EmployeeManagement extends React.Component {
       page: 1,
       pageSize: 10,
       visible: false,
+      updateVisible:false,
       title: '',
       fields: {},
+      record:{}
     };
   }
   componentDidMount() {
@@ -113,21 +200,21 @@ export default class EmployeeManagement extends React.Component {
   handleRowKey = (record, i) => {
     return record.id;
   };
-  onShowSizeChange = (current, pageSize) => {
-    console.log(current, pageSize);
-    this.setState(
-      {
-        pageSize,
-        current,
-      },
+  onShowPageChange = (current) => {
+    this.setState({ page:current,},
       () => {
         this.SearchSubmit(this.state.fields);
       },
     );
   };
-
+  onShowSizeChange = (current,pageSize)=>{
+    this.setState({ pageSize },
+      () => {
+        this.SearchSubmit(this.state.fields);
+      },
+    );
+  }
   SearchSubmit = fields => {
-    console.log(fields);
     this.setState({
       fields,
     });
@@ -138,8 +225,8 @@ export default class EmployeeManagement extends React.Component {
         page: this.state.page,
         pageSize: this.state.pageSize,
         data: {
-          startTime: fields.date[0] ? moment(fields.date[0]).format('YYYY-MM-DD') : '',
-          endTime: fields.date[1] ? moment(fields.date[1].format('YYYY-MM-DD')) : '',
+          startTime: fields.date && fields.date[0]? moment(fields.date[0]).format('YYYY-MM-DD') : '',
+          endTime: fields.date && fields.date[1]? moment(fields.date[1].format('YYYY-MM-DD')) : '',
           ...fields,
         },
       },
@@ -147,11 +234,19 @@ export default class EmployeeManagement extends React.Component {
   };
 
   handleAddEmployee = fields => {
-    console.log(fields);
     const { dispatch } = this.props
     dispatch({
       type:'employeeList/createEmployee',
       payload:fields
+    }).then(()=>{
+      const {
+        employeeList: { status }
+      } = this.props
+      if (status === 200){
+        message.success('创建成功！')
+        this.handleCreateVisible()
+        this.SearchSubmit(this.state.fields)
+      }
     })
   };
   handleCreateVisible = flag => {
@@ -160,43 +255,76 @@ export default class EmployeeManagement extends React.Component {
       title: '创建新员工',
     });
   };
-  handleCreateModalCancel = () => {
-    this.setState({
-      visible: false,
-    });
+  handleUpdateVisible = (flag,record) => {
+    if(record){
+      this.setState({
+        updateVisible: !!flag,
+        title: '编辑',
+        record
+      });
+    }else{
+      this.setState({
+        updateVisible: !!flag,
+      });
+    }
   };
+  handleUpdateEmployee=fields=>{
+    const { dispatch } = this.props
+    dispatch({
+      type:'employeeList/updateEmployee',
+      payload:fields
+    }).then(()=>{
+      const {
+        employeeList: { status }
+      } = this.props
+      if (status === 200) {
+        message.success('更新成功！')
+        this.handleUpdateVisible(false)
+        this.SearchSubmit(this.state.fields)
+      }
+    })
+  }
+
   render() {
+    const {
+      employeeList: { list, total, deptList },
+      loading,
+    } = this.props;
     const columns = [
       {
         title: '部门',
         dataIndex: 'deptName',
+        key: 'deptName',
         align: 'center',
       },
       {
         title: '人员',
         dataIndex: 'name',
+        key: 'name',
         align: 'center',
       },
       {
         title: '工号',
         dataIndex: 'jobNumber',
+        key: 'jobNumber',
         align: 'center',
       },
       {
         title: '岗位',
         dataIndex: 'jobName',
+        key: 'jobName',
         align: 'center',
       },
       {
         title: '操作',
         dataIndex: 'option',
-        valueType: 'option',
+        key: 'option',
         align: 'center',
-        render: () => (
+        render: (_,record) => (
           <span>
-            <a>编辑</a>
-            <Divider type="vertical" />
-            <a>删除</a>
+            <a onClick={() => { this.handleUpdateVisible(true,record)}}>编辑</a>
+            {/* <Divider type="vertical" />
+            <a>删除</a> */}
           </span>
         ),
       },
@@ -221,11 +349,11 @@ export default class EmployeeManagement extends React.Component {
       },
       {
         key: 'a',
-        type: 'Input',
+        type: 'Select',
         label: '所属部门',
         field: 'deptId',
-        placeholder: '请输入',
-        // list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '部门1' }, { key: '2', itemName: '部门2' }, { key: '3', itemName: '部门3' }]
+        placeholder: '请选择',
+        list:deptList
       },
       {
         key: 'd',
@@ -235,26 +363,31 @@ export default class EmployeeManagement extends React.Component {
         placeholder: '请输入',
       },
     ];
-    const {
-      employeeList: { list, total,deptList },
-      loading,
-    } = this.props;
     
     const pagination = {
       showSizeChanger: true,
       showQuickJumper: true,
       pageSize: this.state.pageSize,
-      current: this.state.current,
+      current: this.state.page,
       total: total,
       showTotal: total => `Total ${total} 条`,
-      onChange: this.onShowSizeChange,
+      onChange: this.onShowPageChange,
+      onShowSizeChange:this.onShowSizeChange
     };
     const createEmployeeProps = {
       title: this.state.title,
       visible: this.state.visible,
       deptList:deptList,
-      handleCreateModalCancel: this.handleCreateModalCancel,
+      handleCreateModalCancel: this.handleCreateVisible,
       handleAddEmployee: this.handleAddEmployee,
+    };
+    const updateEmployeeProps = {
+      title: this.state.title,
+      updateVisible: this.state.updateVisible,
+      deptList: deptList,
+      record:this.state.record,
+      handleUpdateVisible: this.handleUpdateVisible,
+      handleUpdateEmployee: this.handleUpdateEmployee,
     };
     return (
       <div className={style.employeeLayout}>
@@ -280,6 +413,7 @@ export default class EmployeeManagement extends React.Component {
           className={style.employeeList}
         />
         <CreateEmployee {...createEmployeeProps} />
+        <UpdateEmployee {...updateEmployeeProps} />
       </div>
     );
   }

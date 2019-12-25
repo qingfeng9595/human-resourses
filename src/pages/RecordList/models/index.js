@@ -1,4 +1,4 @@
-import { queryRecordList, updateRule, addRule, removeRule } from '../service';
+import { queryRecordList, queryExport } from '../service';
 const RecordListModel = {
   namespace: 'recordList',
   state: {
@@ -15,6 +15,19 @@ const RecordListModel = {
           payload: response.data,
         });
       }
+    },
+    *fetchRecordExport({ payload }, { call, put }) {
+      const response = yield call(queryExport, payload);
+      console.log(response);
+      let url = window.URL.createObjectURL(new Blob([response], { type: 'application/vnd.ms-excel'  }))
+      let link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.setAttribute('download', '员工考勤汇总' + '.xlsx')
+      // link.download = '员工考勤汇总';
+      document.body.appendChild(link)
+      link.click()
+      window.URL.revokeObjectURL(link.href);
     },
   },
   reducers: {

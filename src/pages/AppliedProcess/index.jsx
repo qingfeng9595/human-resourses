@@ -6,7 +6,7 @@ import style from './index.less'
 const FormItem = Form.Item;
 
 @Form.create()
-export default class OvertimeApply extends React.Component{
+export default class AppliedProcess extends React.Component{
   render(){
     const formLayout = {
       labelCol: { span: 6 },

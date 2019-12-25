@@ -75,7 +75,7 @@ request.interceptors.request.use(async (url, options) => {
     const headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'x-auth-token': token
+      'token': token
     };
     return (
       {

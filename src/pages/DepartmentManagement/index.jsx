@@ -1,16 +1,143 @@
-import { Button, Row, Col, Form, Icon, Table, Divider,Input } from 'antd';
+import { Button, Row, Select, Form, Modal, Table, Divider,Input } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { connect } from 'dva';
 import SearchForm from '@/components/SearchForm'
 import moment from 'moment';
 import style from './index.less'
+import { updateDepartment } from './service';
+import { getOptionList } from '@/utils/utils';
+const FormItem = Form.Item
 
+@Form.create()
+class UpdateDepartment extends React.Component {
+  handleOk = () => {
+    const { form, handleUpdateDepartment, record } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      form.resetFields();
+      fieldsValue.id = record.id
+      handleUpdateDepartment(fieldsValue);
+    });
+  };
+  render() {
+    const { title, updateVisible, handleUpdateVisible, employeeList, record } = this.props;
+    const formItemLayout = {
+      labelCol: {
+        span: 5,
+      },
+      wrapperCol: {
+        span: 15,
+      },
+    };
+    const { getFieldDecorator } = this.props.form;
+    return (
+      <Modal
+        title={title}
+        destroyOnClose
+        visible={updateVisible}
+        onOk={this.handleOk}
+        onCancel={() => handleUpdateVisible()}
+      >
+        <Form layout="horizontal">
+          <FormItem label="部门" {...formItemLayout}>
+            {getFieldDecorator('name', {
+              initialValue: record.deptName,
+              rules: [
+                {
+                  required: true,
+                  message: '部门不能为空',
+                },
+              ],
+            })(<Input placeholder="请输入" />)}
+          </FormItem>
+          <FormItem label="部门主管" {...formItemLayout}>
+            {getFieldDecorator('deptId', {
+              initialValue: record.deptId,
+            })(
+              <Select placeholder='请选择' showSearch>
+                {getOptionList(employeeList)}
+              </Select>
+            )}
+          </FormItem>
+        </Form>
+      </Modal>
+    );
+  }
+}
+
+@connect(({ departmentList, loading }) => ({
+  departmentList,
+  loading: loading.models.departmentList,
+}))
 export default class DepartmentManagement extends React.Component{
   constructor(props){
     super(props)
-    this.state={}
+    this.state={
+      pageSize:10,
+      page:1,
+      title:'',
+      updateVisible:false,
+      record:{}
+    }
   }
-
+  componentDidMount(){
+    const { dispatch } = this.props
+    dispatch({
+      type:'departmentList/fetchDepartmentList'
+    })
+    dispatch({
+      type: 'departmentList/fetchEmployeeList',
+      payload:{}
+    })
+  }
+  handleRowKey = (record, i) => {
+    return record.id
+  }
+  onShowSizeChange = (current, pageSize) => {
+    this.setState({
+      pageSize,
+    }, () => {
+      this.SearchSubmit(this.state.fields)
+    })
+  }
+  onShowPageChange = (current, pageSize) => {
+    this.setState({
+      page: current,
+    }, () => {
+      this.SearchSubmit(this.state.fields)
+    })
+  }
+  handleUpdateVisible = (flag, record) => {
+    if (record) {
+      this.setState({
+        updateVisible: !!flag,
+        title: '编辑',
+        record
+      });
+    } else {
+      this.setState({
+        updateVisible: !!flag,
+      });
+    }
+  };
+  handleUpdateDepartment = fields => {
+    console.log(fields);
+    
+    const { dispatch } = this.props
+    // dispatch({
+    //   type: 'employeeList/updateEmployee',
+    //   payload: fields
+    // }).then(() => {
+    //   const {
+    //     employeeList: { status }
+    //   } = this.props
+    //   if (status === 200) {
+    //     message.success('更新成功！')
+    //     this.handleUpdateVisible(false)
+    //     this.SearchSubmit(this.state.fields)
+    //   }
+    // })
+  }
   render(){
     const columns = [
       {
@@ -19,19 +146,36 @@ export default class DepartmentManagement extends React.Component{
         align: 'center'
       },
       {
+        title: '部门主管',
+        dataIndex: 'leader',
+        align: 'center'
+      },
+      {
         title: '操作',
         dataIndex: 'option',
         valueType: 'option',
         align: 'center',
-        render: () =>(
+        render: (text,record) =>(
           <span>
-            <a>编辑</a>
-            <Divider type="vertical" />
-            <a>删除</a>
+            <a onClick={() => { this.handleUpdateVisible(true, record) }}>编辑</a>
+            {/* <Divider type="vertical" /> */}
+            {/* <a>删除</a> */}
           </span>
         ),
       },
     ]
+    const {
+      departmentList: { list, employeeList},
+      loading
+    } = this.props
+    const updateEmployeeProps = {
+      title: this.state.title,
+      updateVisible: this.state.updateVisible,
+      employeeList: employeeList,
+      record: this.state.record,
+      handleUpdateVisible: this.handleUpdateVisible,
+      handleUpdateDepartment: this.handleUpdateDepartment,
+    };
     return(
       <div className={style.departmentLayout}>
       <div className={style.create}>
@@ -42,10 +186,9 @@ export default class DepartmentManagement extends React.Component{
         dataSource={list}
         loading={loading}
         rowKey={this.handleRowKey}
-        pagination={pagination}
-        className={style.employeeList}
+        className={style.departmentList}
       />
-      <CreateEmployee  {...createEmployeeProps}/>
+        <UpdateDepartment  {...updateEmployeeProps}/>
     </div>
     )
   }
