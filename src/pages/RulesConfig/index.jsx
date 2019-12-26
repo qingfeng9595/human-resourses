@@ -1,4 +1,4 @@
-import { Button, Divider, Dropdown, Form, Icon, Menu, message, Table, Badge } from 'antd';
+import { Button, Divider, Dropdown, Form, Icon, Menu, message, Table, Card } from 'antd';
 import React, { useState, Fragment } from 'react';
 import SearchForm from '@/components/SearchForm'
 import { connect } from 'dva';
@@ -10,27 +10,45 @@ import style from './index.less'
   rulesConfig,
   loading: loading.models.rulesConfig,
 }))
-export default class RulesConfig extends React.Component{
-  constructor(props){
+export default class RulesConfig extends React.Component {
+  constructor(props) {
     super(props)
     this.state = {}
   }
-  componentDidMount(){
+  componentDidMount() {
     const { dispatch } = this.props
     dispatch({
-      type:'rulesConfig/fetchRuleList'
+      type: 'rulesConfig/fetchRuleList'
     })
   }
-  render(){
+  handleRowKey = (record)=>{
+    return record.id
+  }
+  render() {
     const columns = [
       {
-        title: '部门',
-        dataIndex: 'deptName',
+        title: '规则名称',
+        dataIndex: 'ruleName',
         align: 'center',
       },
       {
-        title: '部门主管',
-        dataIndex: 'leader',
+        title: '适用人员',
+        dataIndex: 'role',
+        align: 'center',
+      },
+      {
+        title: '平时加班倍率',
+        dataIndex: 'normal',
+        align: 'center',
+      },
+      {
+        title: '周末加班倍率',
+        dataIndex: 'weekend',
+        align: 'center',
+      },
+      {
+        title: '节假日加班倍率',
+        dataIndex: 'holiday',
         align: 'center',
       },
       {
@@ -57,6 +75,8 @@ export default class RulesConfig extends React.Component{
       rulesConfig: { list },
       loading,
     } = this.props;
+    console.log(list);
+    
     // const updateEmployeeProps = {
     //   title: this.state.title,
     //   updateVisible: this.state.updateVisible,
@@ -65,9 +85,9 @@ export default class RulesConfig extends React.Component{
     //   handleUpdateVisible: this.handleUpdateVisible,
     //   handleUpdateDepartment: this.handleUpdateDepartment,
     // };
-    return(
+    return (
       <div className={style.rulesConfigLayout}>
-      {/* <div className={style.create}>
+        {/* <div className={style.create}>
         <Button
           type="primary"
           icon="plus"
@@ -77,15 +97,19 @@ export default class RulesConfig extends React.Component{
           新建部门
         </Button>
       </div> */}
-      <Table
-        columns={columns}
-        dataSource={list}
-        loading={loading}
-        rowKey={this.handleRowKey}
-        className={style.departmentList}
-      />
-      {/* <UpdateDepartment {...updateEmployeeProps} /> */}
-    </div>
+        <Card
+          title='加班工时计算规则'
+        >
+          <Table
+            columns={columns}
+            dataSource={list}
+            loading={loading}
+            rowKey={this.handleRowKey}
+            className={style.departmentList}
+          />
+        </Card>
+        {/* <UpdateDepartment {...updateEmployeeProps} /> */}
+      </div>
     )
   }
 }

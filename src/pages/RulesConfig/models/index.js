@@ -11,12 +11,12 @@ const RulesConfigModel = {
     *fetchRuleList(_, { call, put }) {
       const response = yield call(queryRuleList);
       console.log(response);
-      // if (response.rtnCode === 200) {
-      //   yield put({
-      //     type: 'save',
-      //     payload: response.data,
-      //   });
-      // }
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'save',
+          payload: response.data.ruleRespList[0],
+        });
+      }
     },
     *createDepartment({ payload }, { call, put }) {
       const response = yield call(createDepartment, payload);
@@ -28,7 +28,17 @@ const RulesConfigModel = {
   },
   reducers: {
     save(state, action) {
-      return { ...state, list: action.payload.employeeRespList || [], total: action.payload.total };
+      const list = action.payload.ruleRespList.map(item=>{
+        item.ruleConfigItem = JSON.parse(item.ruleConfigItem)
+        item = {
+          ruleName: `加班规则${item.id}`,
+          id:item.id,
+          ruleConfigId: item.ruleConfigId,
+          ...item.ruleConfigItem
+        }
+        return item
+      })
+      return { ...state, list: list || [] };
     }
   }
 }
