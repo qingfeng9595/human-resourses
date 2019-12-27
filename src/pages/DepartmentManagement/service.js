@@ -8,8 +8,8 @@ import request from '@/utils/request';
 // }
 
 export async function updateDepartment(params) {
-  return request(`/api/1/dept/${params.deptId}`, {
-    method: 'POST',
+  return request(`/api/1/dept/${params.id}`, {
+    method: 'PUT',
     data: { ...params },
   });
 }

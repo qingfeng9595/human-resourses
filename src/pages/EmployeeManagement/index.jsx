@@ -246,6 +246,8 @@ export default class EmployeeManagement extends React.Component {
         message.success('创建成功！')
         this.handleCreateVisible()
         this.SearchSubmit(this.state.fields)
+      }else{
+        message.error('创建失败！')
       }
     })
   };
@@ -281,6 +283,8 @@ export default class EmployeeManagement extends React.Component {
         message.success('更新成功！')
         this.handleUpdateVisible(false)
         this.SearchSubmit(this.state.fields)
+      }else{
+        message.error('更新失败！')
       }
     })
   }

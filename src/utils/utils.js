@@ -39,9 +39,19 @@ export const getAuthorityFromRouter = (router = [], pathname) => {
 export function getOptionList(data){
   if(!data){return [];}
   let options = []; //[<Option value='0' key='all_key'>全部</Option>]
+  console.log(data);
+  data.map((item,i)=>{
+    options.push(<Option disabled={item.disabled} value={item.id} key={i}>{item.deptName}</Option>)
+  })
+  return options;
+}
+
+export function getEmployeeOptionList(data) {
+  if (!data) { return []; }
+  let options = []; //[<Option value='0' key='all_key'>全部</Option>]
   // console.log(data);
-  data.map((item)=>{
-    options.push(<Option disabled={item.disabled} value={item.id} key={item.id}>{item.deptName}</Option>)
+  data.map((item) => {
+    options.push(<Option disabled={item.disabled} value={item.jobNumber} key={item.deptName}>{item.deptName}</Option>)
   })
   return options;
 }

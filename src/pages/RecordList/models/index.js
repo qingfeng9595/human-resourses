@@ -1,9 +1,11 @@
-import { queryRecordList, queryExport } from '../service';
+import { queryRecordList, queryExport, queryDepartmentList, queryOvertime, overtimeApply } from '../service';
 const RecordListModel = {
   namespace: 'recordList',
   state: {
     list: [],
     total:0,
+    deptList:[],
+    overtime:{}
   },
   effects: {
     *fetchRecordList({ payload }, { call, put }) {
@@ -12,6 +14,16 @@ const RecordListModel = {
       if (response.rtnCode === 200) {
         yield put({
           type: 'save',
+          payload: response.data,
+        });
+      }
+    },
+    *fetchOvertime({ payload }, { call, put }) {
+      const response = yield call(queryOvertime, payload);
+      console.log(response);
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'saveOvertime',
           payload: response.data,
         });
       }
@@ -29,6 +41,25 @@ const RecordListModel = {
       link.click()
       window.URL.revokeObjectURL(link.href);
     },
+    *fetchDepartmentList({ }, { call, put }) {
+      const response = yield call(queryDepartmentList);
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'saveDept',
+          payload: response.data,
+        });
+      }
+    },
+    *overtimeApply({ payload, callback }, { call, put }) {
+      const response = yield call(overtimeApply, payload);
+      console.log(response);
+      
+      yield put({
+        type: 'saveSuccess',
+        payload: response,
+      });
+      if (callback) callback();
+    },
   },
   reducers: {
     save(state, action) {
@@ -36,6 +67,15 @@ const RecordListModel = {
         item.date = item.startTime
       })
       return { ...state, list: action.payload.attendanceRespList || [],total:action.payload.total };
+    },
+    saveDept(state, action) {
+      return { ...state, deptList: action.payload.deptRespList || [] }
+    },
+    saveOvertime(state, action){
+      return { ...state, overtime: action.payload || {} }
+    },
+    saveSuccess(state, action) {
+      return { ...state, status: action.payload.rtnCode }
     }
   }
 }

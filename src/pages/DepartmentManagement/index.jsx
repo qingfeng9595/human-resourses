@@ -1,11 +1,11 @@
-import { Button, Row, Select, Form, Modal, Table, Divider, Input } from 'antd';
+import { Button, message, Select, Form, Modal, Table, Divider, Input } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { connect } from 'dva';
 import SearchForm from '@/components/SearchForm';
 import moment from 'moment';
 import style from './index.less';
 import { updateDepartment } from './service';
-import { getOptionList } from '@/utils/utils';
+import { getEmployeeOptionList } from '@/utils/utils';
 const FormItem = Form.Item;
 
 @Form.create()
@@ -16,6 +16,7 @@ class UpdateDepartment extends React.Component {
       if (err) return;
       form.resetFields();
       fieldsValue.id = record.id;
+      fieldsValue.parentDeptId = 0
       handleUpdateDepartment(fieldsValue);
     });
   };
@@ -40,7 +41,7 @@ class UpdateDepartment extends React.Component {
       >
         <Form layout="horizontal">
           <FormItem label="部门" {...formItemLayout}>
-            {getFieldDecorator('name', {
+            {getFieldDecorator('deptName', {
               initialValue: record.deptName,
               rules: [
                 {
@@ -51,15 +52,15 @@ class UpdateDepartment extends React.Component {
             })(<Input placeholder="请输入" />)}
           </FormItem>
           <FormItem label="部门主管" {...formItemLayout}>
-            {getFieldDecorator('deptId', {
-              initialValue: record.deptId,
+            {getFieldDecorator('leaderId', {
+              initialValue: record.leaderId,
             })(
               <Select
                 placeholder="请选择"
                 showSearch
                 optionFilterProp="children"
               >
-                {getOptionList(employeeList)}
+                {getEmployeeOptionList(employeeList)}
               </Select>,
             )}
           </FormItem>
@@ -146,6 +147,8 @@ export default class DepartmentManagement extends React.Component {
         dispatch({
           type: 'departmentList/fetchDepartmentList',
         });
+      }else{
+        message.error('更新失败！')
       }
     })
   };
@@ -158,7 +161,7 @@ export default class DepartmentManagement extends React.Component {
       },
       {
         title: '部门主管',
-        dataIndex: 'leader',
+        dataIndex: 'employeeName',
         align: 'center',
       },
       {

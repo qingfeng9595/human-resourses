@@ -1,9 +1,6 @@
 import { Button, Divider, Dropdown, Form, Icon, Menu, message, Table, Badge } from 'antd';
 import React, { useState, Fragment } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
-import ProTable from '@ant-design/pro-table';
-import CreateForm from './components/CreateForm';
-import UpdateForm from './components/UpdateForm';
+import OvertimeApply from './components/OvertimeApply';
 import SearchForm from '@/components/SearchForm'
 import { connect } from 'dva';
 import moment from 'moment';
@@ -21,6 +18,8 @@ class RecordList extends React.Component {
     this.state = {
       pageSize: 10,
       page: 1,
+      applyVisible:false,
+      record:{},
       fields: {
         date: [
           new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-01`),
@@ -45,7 +44,7 @@ class RecordList extends React.Component {
   }
   onShowPageChange = (current, pageSize) => {
     this.setState({
-      page:current,
+      page: current,
     }, () => {
       this.SearchSubmit(this.state.fields)
     })
@@ -76,6 +75,8 @@ class RecordList extends React.Component {
     }
   }
   SearchSubmit = (fields) => {
+    console.log(fields);
+    
     this.setState({
       fields
     })
@@ -91,7 +92,7 @@ class RecordList extends React.Component {
           employeeName: fields.employeeName ? fields.employeeName : '',
           dept_id: fields.dept_id ? fields.dept_id : '',
           member: fields.member ? fields.member : '',
-          status: this.handleStatus(fields.status)
+          status: fields.status
         }
       }
     });
@@ -108,6 +109,35 @@ class RecordList extends React.Component {
       }
     })
   }
+  handleApplyVisible = (flag, record) => {
+    if(!record){
+      this.setState({
+        applyVisible: !!flag
+      });
+      return
+    }
+    const { dispatch } = this.props
+    dispatch({
+      type: 'recordList/fetchOvertime',
+      payload: record
+    }).then(()=>{
+      const {
+        recordList:{overtime},
+      } = this.props
+      this.setState({
+        record: overtime,
+        applyVisible: !!flag
+      });
+    })
+  }
+  handleApply=fields=>{
+    console.log(fields);
+    const { dispatch } = this.props
+    dispatch({
+      type:"recordList/overtimeApply",
+      payload:fields
+    })
+  }
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -121,8 +151,15 @@ class RecordList extends React.Component {
         }
       }
     });
+    dispatch({
+      type: 'recordList/fetchDepartmentList',
+    })
   }
   render() {
+    const {
+      recordList: { list, total, deptList },
+      loading,
+    } = this.props;
     const columns = [
       {
         title: '部门',
@@ -189,8 +226,8 @@ class RecordList extends React.Component {
         valueType: 'option',
         align: 'center',
         render: (_, record) => {
-          if (record.overtime > 0) {
-            return <a>申请加班</a>
+          if (record.status === '1') {
+            return <a onClick={() => this.handleApplyVisible(true, record)}>申请加班</a>
           } else if (record.status === '2') {
             return <a>申请补卡</a>
           } else if (record.status === '3' || record.status === '4') {
@@ -236,7 +273,7 @@ class RecordList extends React.Component {
         label: '所属部门',
         field: 'dept_id',
         placeholder: '请选择',
-        list: [{ key: '0', itemName: '全部' }, { key: '1', itemName: '部门1' }, { key: '2', itemName: '部门2' }, { key: '3', itemName: '部门3' }]
+        list: deptList
       },
       {
         key: 'd',
@@ -252,13 +289,9 @@ class RecordList extends React.Component {
         field: 'status',
         initialValue: '全部',
         placeholder: '请选择',
-        list: [{ key: '0', itemName: '全部' }, { key: '0', itemName: '正常' }, { key: '1', itemName: '加班' }, { key: '2', itemName: '异常' }, { key: '3', itemName: '迟到' }, { key: '4', itemName: '早退' }]
+        list: [{ id: '0', deptName: '全部' }, { id: '0', deptName: '正常' }, { id: '1', deptName: '加班' }, { id: '2', deptName: '异常' }, { id: '3', deptName: '迟到' }, { id: '4', deptName: '早退' }]
       },
     ]
-    const {
-      recordList: { list, total },
-      loading,
-    } = this.props;
     const pagination = {
       showSizeChanger: true,
       showQuickJumper: true,
@@ -269,6 +302,13 @@ class RecordList extends React.Component {
       onChange: this.onShowPageChange,
       onShowSizeChange: this.onShowSizeChange
     };
+    const overtimeApplyProps = {
+      modalVisible:this.state.applyVisible,
+      handleAdd:this.handleApply,
+      onCancel: this.handleApplyVisible,
+      record: this.state.record,
+      deptList:deptList
+    }
     return (
       <div className={style.recordLayout}>
         <div className={style.searchForm}>
@@ -285,6 +325,7 @@ class RecordList extends React.Component {
           pagination={pagination}
           className={style.recordList}
         />
+        <OvertimeApply {...overtimeApplyProps}/>
       </div>
     );
   }

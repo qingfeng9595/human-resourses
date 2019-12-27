@@ -1,12 +1,12 @@
-import { queryDepartmentList, createDepartment, queryEmployeeList,updateDepartment } from '../service';
+import { queryDepartmentList, createDepartment, queryEmployeeList, updateDepartment } from '../service';
 import { message } from 'antd';
 const DepartmentListModel = {
   namespace: 'departmentList',
   state: {
     list: [],
     total: 0,
-    deptList:[],
-    employeeList:[]
+    deptList: [],
+    employeeList: []
   },
   effects: {
     *fetchDepartmentList(_, { call, put }) {
@@ -27,12 +27,11 @@ const DepartmentListModel = {
     },
     *updateDepartment({ payload }, { call, put }) {
       const response = yield call(updateDepartment, payload);
-      if (response.rtnCode === 200) {
-        yield put({
-          type: 'saveSuccess',
-          payload: response,
-        });
-      }
+      yield put({
+        type: 'saveSuccess',
+        payload: response,
+      });
+
     },
     *fetchEmployeeList(_, { call, put }) {
       const response = yield call(queryEmployeeList);
@@ -48,13 +47,13 @@ const DepartmentListModel = {
     save(state, action) {
       return { ...state, list: action.payload.deptRespList || [], total: action.payload.total };
     },
-    saveEmployee(state, action){
-      action.payload.employeeRespList.map(item=>{
-        item.deptName = item.name 
+    saveEmployee(state, action) {
+      action.payload.employeeRespList.map(item => {
+        item.deptName = item.name
       })
       return { ...state, employeeList: action.payload.employeeRespList || [] };
     },
-    saveSuccess(state, action){
+    saveSuccess(state, action) {
       return { ...state, status: action.payload.rtnCode }
     }
   }
