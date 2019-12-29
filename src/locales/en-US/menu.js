@@ -26,6 +26,8 @@ export default {
   'menu.applied-process': 'Applied Process',
   'menu.employee-management': 'Employee Management',
   'menu.department-management': 'Department Management',
+  'menu.dept-record-list': 'Department Record',
+  'menu.overtime-apply': 'Overtime Apply',
   'menu.rules-config': 'Rules Config',
   'menu.dashboard': 'Dashboard',
   'menu.list.basic-list': 'Basic List',

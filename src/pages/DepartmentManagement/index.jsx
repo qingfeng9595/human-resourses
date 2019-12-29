@@ -198,7 +198,7 @@ export default class DepartmentManagement extends React.Component {
     };
     return (
       <div className={style.departmentLayout}>
-        <div className={style.create}>
+        {/* <div className={style.create}>
           <Button
             type="primary"
             icon="plus"
@@ -207,7 +207,7 @@ export default class DepartmentManagement extends React.Component {
           >
             新建部门
           </Button>
-        </div>
+        </div> */}
         <Table
           columns={columns}
           dataSource={list}

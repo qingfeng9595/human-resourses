@@ -1,6 +1,5 @@
 import { Button, Divider, Dropdown, Form, Icon, Menu, message, Table, Badge } from 'antd';
 import React, { useState, Fragment } from 'react';
-import OvertimeApply from './components/OvertimeApply';
 import SearchForm from '@/components/SearchForm'
 import { connect } from 'dva';
 import moment from 'moment';
@@ -8,11 +7,11 @@ import style from './index.less'
 // import { queryRule, updateRule, addRule, removeRule } from './service';
 
 
-@connect(({ recordList, loading }) => ({
-  recordList,
-  loading: loading.models.recordList,
+@connect(({ deptRecordList, loading }) => ({
+  deptRecordList,
+  loading: loading.models.deptRecordList,
 }))
-class RecordList extends React.Component {
+class DeptRecordList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -28,13 +27,7 @@ class RecordList extends React.Component {
       }
     }
   }
-  // const [createModalVisible, handleModalVisible] = useState(false);
-  // const [updateModalVisible, handleUpdateModalVisible] = useState(false);
-  // const [stepFormValues, setStepFormValues] = useState({});
-  // const [actionRef, setActionRef] = useState();
-  handleGetRecordList = (param) => {
 
-  }
   onShowSizeChange = (current, pageSize) => {
     this.setState({
       pageSize,
@@ -80,7 +73,7 @@ class RecordList extends React.Component {
     })
     const { dispatch } = this.props;
     dispatch({
-      type: 'recordList/fetchRecordList',
+      type: 'deptRecordList/fetchRecordList',
       payload: {
         page: this.state.page,
         size: this.state.pageSize,
@@ -88,9 +81,8 @@ class RecordList extends React.Component {
           start_time: moment(fields.date[0]).format('YYYY-MM-DD'),
           end_time: moment(fields.date[1]).format('YYYY-MM-DD'),
           employeeName: fields.employeeName ? fields.employeeName : '',
-          dept_id: fields.dept_id ? fields.dept_id : '',
           member: fields.member ? fields.member : '',
-          status: fields.status
+          status: fields.status=="00"?"":fields.status
         }
       }
     });
@@ -128,34 +120,17 @@ class RecordList extends React.Component {
       });
     })
   }
-  handleApply=fields=>{
-    const { dispatch } = this.props
-    dispatch({
-      type:"recordList/overtimeApply",
-      payload:fields
-    }).then(()=>{
-      const { 
-        recordList: { status }
-       } = this.props
-       if (status === 200){
-        message.success('创建成功！')
-        this.handleApplyVisible()
-        this.SearchSubmit(this.state.fields)
-      }else{
-        message.error('创建失败！')
-      }
-    })
-  }
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'recordList/fetchRecordList',
+      type: 'deptRecordList/fetchRecordList',
       payload: {
         page: this.state.page,
         size: this.state.pageSize,
         data: {
           start_time: moment(new Date(`${new Date().getFullYear()}-${new Date().getMonth() + 1}-01`)).format('YYYY-MM-DD'),
-          end_time: moment(new Date()).format('YYYY-MM-DD')
+          end_time: moment(new Date()).format('YYYY-MM-DD'),
+          status:''
         }
       }
     });
@@ -165,7 +140,7 @@ class RecordList extends React.Component {
   }
   render() {
     const {
-      recordList: { list, total, deptList },
+      deptRecordList: { list, total, deptList },
       loading,
     } = this.props;
     const columns = [
@@ -228,34 +203,6 @@ class RecordList extends React.Component {
           }
         },
       },
-      {
-        title: '操作',
-        dataIndex: 'option',
-        valueType: 'option',
-        align: 'center',
-        render: (_, record) => {
-          if (record.status === '1' ) {
-            if(record.op === 1){return <a>已申请</a>}
-            return <a onClick={() => this.handleApplyVisible(true, record)}>申请加班</a>
-          } else if (record.status === '2') {
-            return <a>申请补卡</a>
-          } else if (record.status === '3' || record.status === '4') {
-            return <a>申请调休</a>
-          }
-          // <>
-          //   <a
-          //     onClick={() => {
-          //       handleUpdateModalVisible(true);
-          //       setStepFormValues(record);
-          //     }}
-          //   >
-          //     配置
-          //   </a>
-          //   <Divider type="vertical" />
-          //   <a href="">订阅警报</a>
-          // </>
-        },
-      },
     ];
 
     const formList = [
@@ -276,14 +223,14 @@ class RecordList extends React.Component {
         field: 'employeeName',
         placeholder: '请输入',
       },
-      {
-        key: 'a',
-        type: 'Select',
-        label: '所属部门',
-        field: 'dept_id',
-        placeholder: '请选择',
-        list: deptList
-      },
+      // {
+      //   key: 'a',
+      //   type: 'Select',
+      //   label: '所属部门',
+      //   field: 'dept_id',
+      //   placeholder: '请选择',
+      //   list: deptList
+      // },
       {
         key: 'd',
         type: 'Input',
@@ -311,21 +258,14 @@ class RecordList extends React.Component {
       onChange: this.onShowPageChange,
       onShowSizeChange: this.onShowSizeChange
     };
-    const overtimeApplyProps = {
-      modalVisible:this.state.applyVisible,
-      handleAdd:this.handleApply,
-      onCancel: this.handleApplyVisible,
-      record: this.state.record,
-      deptList:deptList
-    }
     return (
-      <div className={style.recordLayout}>
+      <div className={style.deptRecordLayout}>
         <div className={style.searchForm}>
           <SearchForm formList={formList} styles={style} SearchSubmit={this.SearchSubmit} />
         </div>
-        <div className={style.export}>
+        {/* <div className={style.export}>
           <Button type='primary' icon='export' style={{ marginLeft: 8 }} onClick={this.handleExport} >导出Excel</Button>
-        </div>
+        </div> */}
         <Table
           columns={columns}
           dataSource={list}
@@ -334,11 +274,10 @@ class RecordList extends React.Component {
           pagination={pagination}
           className={style.recordList}
         />
-        <OvertimeApply {...overtimeApplyProps}/>
       </div>
     );
   }
 };
 
 // export default Form.create()(RecordList);
-export default RecordList;
+export default DeptRecordList;

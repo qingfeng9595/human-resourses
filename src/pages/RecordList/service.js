@@ -28,7 +28,7 @@ export async function queryOvertime(params) {
 }
 
 export async function overtimeApply(params) {
-  return request(`/api/1/overtime`, {
+  return request(`/api/1/overtime/`, {
     method: 'POST',
     data: { ...params },
   });

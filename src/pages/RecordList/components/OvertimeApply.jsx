@@ -15,8 +15,8 @@ class OvertimeApply extends React.Component {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         form.resetFields();
-        // fieldsValue.startTime = record.startTime
-        // fieldsValue.endTime = record.endTime
+        fieldsValue.startTime = moment(record.startTime).format("YYYY-MM-DD HH:mm:ss")
+        fieldsValue.endTime = moment(record.endTime).format("YYYY-MM-DD HH:mm:ss")
         fieldsValue.deptId = record.deptId
         fieldsValue.attendanceId = record.id
         delete fieldsValue.date

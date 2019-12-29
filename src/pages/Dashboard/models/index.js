@@ -1,22 +1,22 @@
-import { queryDepartmentList, createDepartment } from '../service';
+import { queryAttendanceMonthSumList } from '../service';
 import { message } from 'antd';
 const DashboardModel = {
   namespace: 'dashboard',
   state: {
-    list: [],
+    monthList: [],
     total: 0,
     deptList: []
   },
   effects: {
-    *fetchDepartmentList(_, { call, put }) {
-      const response = yield call(queryDepartmentList);
+    *fetchAttendanceMonthSumList(_, { call, put }) {
+      const response = yield call(queryAttendanceMonthSumList);
       console.log(response);
-      // if (response.rtnCode === 200) {
-      //   yield put({
-      //     type: 'save',
-      //     payload: response.data,
-      //   });
-      // }
+      if (response.rtnCode === 200) {
+        yield put({
+          type: 'save',
+          payload: response.data,
+        });
+      }
     },
     *createDepartment({ payload }, { call, put }) {
       const response = yield call(createDepartment, payload);
@@ -28,7 +28,7 @@ const DashboardModel = {
   },
   reducers: {
     save(state, action) {
-      return { ...state, list: action.payload.employeeRespList || [], total: action.payload.total };
+      return { ...state, monthList: action.payload.attendanceMonthRespList || [] };
     }
   }
 }

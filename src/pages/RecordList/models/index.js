@@ -52,8 +52,6 @@ const RecordListModel = {
     },
     *overtimeApply({ payload, callback }, { call, put }) {
       const response = yield call(overtimeApply, payload);
-      console.log(response);
-      
       yield put({
         type: 'saveSuccess',
         payload: response,

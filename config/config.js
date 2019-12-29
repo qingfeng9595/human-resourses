@@ -123,6 +123,18 @@ export default {
               component: './RecordList',
             },
             {
+              name: 'dept-record-list',
+              icon: 'table',
+              path: '/deptrecordlist',
+              component: './DepartmentRecordList',
+            },
+            {
+              name: 'overtime-apply',
+              icon: 'table',
+              path: '/overtimeapplylist',
+              component: './OvertimeApply',
+            },
+            {
               name: 'applied-process',
               icon: 'form',
               path: '/appliedprocess',
