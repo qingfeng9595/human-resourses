@@ -23,9 +23,6 @@ class Login extends Component {
 
     if (!err) {
       const { dispatch } = this.props;
-      console.log(values);
-      // console.log(type);
-      
       dispatch({
         type: 'login/login',
         // payload: { ...values, type },
@@ -210,7 +207,7 @@ class Login extends Component {
           <Submit loading={submitting}>
             <FormattedMessage id="user-login.login.login" />
           </Submit>
-          <div className={styles.other}>
+          {/* <div className={styles.other}>
             <FormattedMessage id="user-login.login.sign-in-with" />
             <Icon type="alipay-circle" className={styles.icon} theme="outlined" />
             <Icon type="taobao-circle" className={styles.icon} theme="outlined" />
@@ -218,7 +215,7 @@ class Login extends Component {
             <Link className={styles.register} to="/user/register">
               <FormattedMessage id="user-login.login.signup" />
             </Link>
-          </div>
+          </div> */}
         </LoginComponents>
       </div>
     );

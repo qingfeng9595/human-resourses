@@ -168,6 +168,8 @@ class RecordList extends React.Component {
       recordList: { list, total, deptList },
       loading,
     } = this.props;
+    console.log(list);
+    
     const columns = [
       {
         title: '部门',

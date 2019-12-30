@@ -10,7 +10,6 @@ const RecordListModel = {
   effects: {
     *fetchRecordList({ payload }, { call, put }) {
       const response = yield call(queryRecordList, payload);
-      console.log(response);
       if (response.rtnCode === 200) {
         yield put({
           type: 'save',
@@ -20,7 +19,6 @@ const RecordListModel = {
     },
     *fetchOvertime({ payload }, { call, put }) {
       const response = yield call(queryOvertime, payload);
-      console.log(response);
       if (response.rtnCode === 200) {
         yield put({
           type: 'saveOvertime',
@@ -30,7 +28,6 @@ const RecordListModel = {
     },
     *fetchRecordExport({ payload }, { call, put }) {
       const response = yield call(queryExport, payload);
-      console.log(response);
       let url = window.URL.createObjectURL(new Blob([response], { type: 'application/vnd.ms-excel'  }))
       let link = document.createElement('a')
       link.style.display = 'none'

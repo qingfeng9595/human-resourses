@@ -1,16 +1,15 @@
-import { queryAppliedList, queryEmployeeList } from '../service';
+import { queryAppliedList, queryEmployeeList, queryApplyOpinion} from '../service';
 const AppliedListModel = {
   namespace: 'appliedList',
   state: {
     list: [],
     total: 0,
-    deptList: []
+    deptList: [],
+    opList:[]
   },
   effects: {
     *fetchAppliedList({ payload }, { call, put }) {
       const response = yield call(queryAppliedList, payload);
-      console.log(response);
-
       if (response.rtnCode === 200) {
         yield put({
           type: 'save',
@@ -18,13 +17,11 @@ const AppliedListModel = {
         });
       }
     },
-    *fetchEmployeeList({ payload }, { call, put }) {
-      const response = yield call(queryEmployeeList, payload);
-      console.log(response);
-
+    *fetchApplyOpinion({ payload }, { call, put }) {
+      const response = yield call(queryApplyOpinion, payload);
       if (response.rtnCode === 200) {
         yield put({
-          type: 'saveEmployee',
+          type: 'saveOpinion',
           payload: response.data,
         });
       }
@@ -37,8 +34,8 @@ const AppliedListModel = {
       })
       return { ...state, list: action.payload.overtimeListRespList || [], total: action.payload.overtimeListRespList.length };
     },
-    saveEmployee(state, action) {
-      // return { ...state, deptList: action.payload.deptRespList || [] }
+    saveOpinion(state, action) {
+      return { ...state, opList: action.payload.list || [] }
     },
   }
 }

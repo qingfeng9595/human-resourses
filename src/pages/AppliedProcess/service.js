@@ -13,3 +13,7 @@ export async function queryEmployeeList(params) {
     data: { ...params.data },
   });
 }
+
+export async function queryApplyOpinion(params) {
+  return request(`/api/1/overtime/${params.id}`);
+}

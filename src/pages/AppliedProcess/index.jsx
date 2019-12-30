@@ -1,4 +1,4 @@
-import { Button, Table, Col, Form, Badge, Menu, message, Input, Tooltip } from 'antd';
+import { Button, Table, Col, Form, Badge, Modal, message, Input, Tooltip } from 'antd';
 import React, { useState, Fragment } from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -61,6 +61,25 @@ export default class AppliedProcess extends React.Component {
   handleRowKey = (record, i) => {
     return record.startTime + i;
   };
+  handleViewOpinion=record=>{
+    const { dispatch } = this.props
+    dispatch({
+      type:'appliedList/fetchApplyOpinion',
+      payload:record
+    }).then(()=>{
+      const { appliedList :{opList}} = this.props
+      Modal.info({
+        title: '审批意见',
+        content: (
+          <div>
+            <p>{opList[1].flowNodeDescription}</p>
+          </div>
+        ),
+        onOk() { },
+        okText:'知道了'
+      });
+    })
+  }
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
@@ -111,14 +130,14 @@ export default class AppliedProcess extends React.Component {
         dataIndex: 'startTime',
         key: 'startTime',
         align: 'center',
-        render: val => <span>{moment(val).format('YYYY-MM-DD HH:ss')}</span>,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span>,
       },
       {
         title: '下班时间',
         dataIndex: 'endTime',
         key: 'endTime',
         align: 'center',
-        render: val => <span>{moment(val).format('YYYY-MM-DD HH:ss')}</span>,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm')}</span>,
       },
       {
         title: '加班时长',
@@ -133,9 +152,20 @@ export default class AppliedProcess extends React.Component {
         align: 'center',
         render: val => (
           <Tooltip title={val}>
-            <a>鼠标移入查看</a>
+            <a>移入查看</a>
           </Tooltip>
         ),
+      },
+      {
+        title: '审批意见',
+        dataIndex: 'opinion',
+        key: 'opinion',
+        align: 'center',
+        render: (val,record) => {
+          if(record.status != 0){
+            return <a onClick={()=>this.handleViewOpinion(record)}>查看</a>
+          }
+        },
       },
       {
         title: '状态',

@@ -130,7 +130,9 @@ const BasicLayout = props => {
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
           {logoDom}
-          {titleDom}
+          <h1 style={{color:'#fff',display:'inline-block'}}>传科考勤管理</h1>
+          
+          {/* {titleDom} */}
         </Link>
       )}
       onCollapse={handleMenuCollapse}
