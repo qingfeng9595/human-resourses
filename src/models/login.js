@@ -64,7 +64,31 @@ const Model = {
   },
   reducers: {
     changeLoginStatus(state, { payload }) {
-      setAuthority(payload.currentAuthority);
+      let currentAuthority
+      payload.data.roleListResp.list.map(item=>{
+        if(item.id == 3){
+          currentAuthority = "staff"
+        } else if (item.id == 4){
+          currentAuthority = 'leader'
+        } else if (item.id == 5) {
+          currentAuthority = 'admin'
+        }
+      })
+      // let roleId = payload.data.roleListResp.list[0].id
+      // switch (roleId) {
+      //   case 3:
+      //     currentAuthority = 'staff'
+      //     break;
+      //   case 4:
+      //     currentAuthority = 'leader'
+      //     break;
+      //   case 5:
+      //     currentAuthority = 'admin'
+      //     break;
+      //   default: currentAuthority = 'staff'
+      //     break;
+      // }
+      setAuthority(currentAuthority);
       return { ...state, status: payload.status, type: payload.type };
     },
   },

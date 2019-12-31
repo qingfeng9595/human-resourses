@@ -476,12 +476,12 @@ export default class RulesConfig extends React.Component {
             >
               编辑
             </a>
-            <Divider type="vertical" />
+            {/* <Divider type="vertical" />
             <a
               onClick={() => {
                 this.handleDeleteRule(record);
               }}
-            > 删除</a>
+            > 删除</a> */}
           </span>
         ),
       },

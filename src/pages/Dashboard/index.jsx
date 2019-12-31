@@ -151,7 +151,7 @@ export default class Dashboard extends React.Component {
     return (
       <div className={style.dashboardLayout}>
         <div className={style.up}>
-          <div className={style.chart} style={{ marginRight: '15px' }}>
+          <div className={style.barChart} style={{ marginRight: '15px' }}>
             <Card title="每月加班工时统计">
               {/* <div ref="monthBarChart" style={{ width: '100%', height: '300px' }}></div> */}
               <Chart height={300} data={dv} forceFit>
@@ -237,7 +237,7 @@ export default class Dashboard extends React.Component {
           </div>
         </div>
         <div className={style.down}>
-          <div className={style.chart} style={{ marginRight: '15px' }}>
+          <div className={style.barChart} style={{ marginRight: '15px' }}>
             <Card title="部门加班工时统计">
               <Chart height={300} data={dv3} forceFit>
                 <Axis name="部门" />

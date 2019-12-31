@@ -91,11 +91,10 @@ export default {
         {
           path: '/',
           component: '../layouts/BasicLayout',
-          authority: ['admin', 'user'],
           routes: [
             {
               path: '/',
-              redirect: '/dashboard',
+              redirect: '/recordlist',
             },
             // {
             //   path: '/welcome',
@@ -103,18 +102,19 @@ export default {
             //   icon: 'smile',
             //   component: './Welcome',
             // },
-            {
-              path: '/admin',
-              name: 'admin',
-              icon: 'crown',
-              component: './Admin',
-              authority: ['admin'],
-            },
+            // {
+            //   path: '/admin',
+            //   name: 'admin',
+            //   icon: 'crown',
+            //   component: './Admin',
+            //   authority: ['admin'],
+            // },
             {
               name: 'dashboard',
               icon: 'dashboard',
               path: '/dashboard',
               component: './Dashboard',
+              authority: ['admin'],
             },
             {
               name: 'record-list',
@@ -127,12 +127,14 @@ export default {
               icon: 'table',
               path: '/deptrecordlist',
               component: './DepartmentRecordList',
+              authority: ['leader'],
             },
             {
               name: 'overtime-apply',
               icon: 'table',
               path: '/overtimeapplylist',
               component: './OvertimeApply',
+              authority: ['leader'],
             },
             {
               name: 'applied-process',
@@ -145,18 +147,21 @@ export default {
               icon: 'usergroup-add',
               path: '/employeemanagement',
               component: './EmployeeManagement',
+              authority: ['admin'],
             },
             {
               name: 'department-management',
               icon: 'build',
               path: '/departmentmanagement',
               component: './DepartmentManagement',
+              authority: ['admin'],
             },
             {
               name: 'rules-config',
               icon: 'setting',
               path: '/rulesconfig',
               component: './RulesConfig',
+              authority: ['admin'],
             },
             {
               component: './404',
