@@ -5,7 +5,8 @@ import React from 'react';
 import { connect } from 'dva';
 import { formatMessage } from 'umi-plugin-react/locale';
 import SelectLang from '@/components/SelectLang';
-import logo from '../assets/logo.svg';
+// import logo from '../assets/logo.svg';
+import logo from '../../public/icons/logo.png';
 import styles from './UserLayout.less';
 
 const UserLayout = props => {
@@ -44,7 +45,7 @@ const UserLayout = props => {
             <div className={styles.header}>
               <Link to="/">
                 <img alt="logo" className={styles.logo} src={logo} />
-                <span className={styles.title}>传科考勤管理</span>
+                <span className={styles.title}>厦航传科考勤管理</span>
               </Link>
             </div>
             {/* <div className={styles.desc}>Ant Design 是西湖区最具影响力的 Web 设计规范</div> */}

@@ -129,8 +129,9 @@ const BasicLayout = props => {
       logo={logo}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
-          {logoDom}
-          <h1 style={{color:'#fff',display:'inline-block'}}>传科考勤管理</h1>
+          {/* {logoDom} */}
+          <img src="./icons/logo.png" width='70' alt=""/>
+          <h1 style={{color:'#fff',display:'inline-block',marginLeft:'0'}}>厦航传科考勤管理</h1>
           
           {/* {titleDom} */}
         </Link>

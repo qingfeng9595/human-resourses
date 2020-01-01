@@ -90,7 +90,7 @@ class RecordList extends React.Component {
           employeeName: fields.employeeName ? fields.employeeName : '',
           dept_id: fields.dept_id ? fields.dept_id : '',
           member: fields.member ? fields.member : '',
-          status: fields.status
+          status:fields.status=='00'?"":fields.status,
         }
       }
     });
@@ -203,6 +203,12 @@ class RecordList extends React.Component {
         dataIndex: 'endTime',
         align: 'center',
         render: val => <span>{moment(val).format('HH:mm')}</span>,
+      },
+      {
+        title: '加班时间',
+        dataIndex: 'overtime',
+        align: 'overtime',
+        // render: val => <span>{moment(val).format('HH:mm')}</span>,
       },
       {
         title: '状态',

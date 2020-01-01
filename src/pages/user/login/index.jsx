@@ -102,7 +102,7 @@ class Login extends Component {
               name="account"
               placeholder={`${formatMessage({
                 id: 'user-login.login.userName',
-              })}: admin or user`}
+              })}: 工号`}
               rules={[
                 {
                   required: true,
@@ -116,7 +116,7 @@ class Login extends Component {
               name="password"
               placeholder={`${formatMessage({
                 id: 'user-login.login.password',
-              })}: ant.design`}
+              })}: 123456`}
               rules={[
                 {
                   required: true,
@@ -134,7 +134,7 @@ class Login extends Component {
               }}
             />
           </Tab>
-          <Tab
+          {/* <Tab
             key="mobile"
             tab={formatMessage({
               id: 'user-login.login.tab-login-mobile',
@@ -190,19 +190,19 @@ class Login extends Component {
                 },
               ]}
             />
-          </Tab>
+          </Tab> */}
           <div>
             <Checkbox checked={autoLogin} onChange={this.changeAutoLogin}>
               <FormattedMessage id="user-login.login.remember-me" />
             </Checkbox>
-            <a
+            {/* <a
               style={{
                 float: 'right',
               }}
               href=""
             >
               <FormattedMessage id="user-login.login.forgot-password" />
-            </a>
+            </a> */}
           </div>
           <Submit loading={submitting}>
             <FormattedMessage id="user-login.login.login" />
