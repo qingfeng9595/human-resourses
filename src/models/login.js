@@ -66,6 +66,9 @@ const Model = {
   reducers: {
     changeLoginStatus(state, { payload }) {
       let currentAuthority
+      if( payload.data.roleListResp.list.length===0){
+        currentAuthority = "staff"
+      }
       payload.data.roleListResp.list.map(item=>{
         if(item.id == 3){
           currentAuthority = "staff"
@@ -73,6 +76,8 @@ const Model = {
           currentAuthority = 'leader'
         } else if (item.id == 5) {
           currentAuthority = 'admin'
+        }else{
+          currentAuthority = "staff"
         }
       })
       // let roleId = payload.data.roleListResp.list[0].id

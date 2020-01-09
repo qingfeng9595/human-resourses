@@ -141,6 +141,7 @@ export default {
               icon: 'form',
               path: '/appliedprocess',
               component: './AppliedProcess',
+              authority: ['leader','staff'],
             },
             {
               name: 'employee-management',

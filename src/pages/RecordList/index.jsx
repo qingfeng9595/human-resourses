@@ -342,9 +342,11 @@ class RecordList extends React.Component {
         <div className={style.searchForm}>
           <SearchForm formList={formList} styles={style} SearchSubmit={this.SearchSubmit} />
         </div>
-        <div className={style.export}>
+        {
+          JSON.parse(window.localStorage.getItem('antd-pro-authority'))[0]=="admin"&&<div className={style.export}>
           <Button type='primary' icon='export' style={{ marginLeft: 8 }} onClick={this.handleExport} >导出Excel</Button>
         </div>
+        }
         <Table
           columns={columns}
           dataSource={list}
