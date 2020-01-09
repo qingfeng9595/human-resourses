@@ -207,8 +207,19 @@ class RecordList extends React.Component {
       {
         title: '加班时间',
         dataIndex: 'overtime',
-        align: 'overtime',
-        // render: val => <span>{moment(val).format('HH:mm')}</span>,
+        align: 'center',
+        render: val => <span>{`${val}h`}</span>,
+      },
+      {
+        title: '加班时间（换算）',
+        dataIndex: 'exchangeTime',
+        align: 'center',
+        render: val => <span>{`${val}h`}</span>,
+      },
+      {
+        title: '星期',
+        dataIndex: 'weekDayIndex',
+        align: 'center',
       },
       {
         title: '状态',
